@@ -1,6 +1,6 @@
 package com.minecraft_wiki.backend.Model;
 
-import com.minecraft_wiki.backend.Model.enums.MobStrength;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,15 +8,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@NoArgsConstructor
 
-public class Boss extends BaseMob {
-
-    public Boss(UUID mobId,
-                String name,
-                int health,
-                int armor,
-                int damage) {
+public class Mob extends BaseMob {
+    public Mob(UUID mobId,
+               String name,
+               int health,
+               int armor,
+               int damage) {
 
         this.mobId = mobId;
         this.name = name;
@@ -31,7 +29,6 @@ public class Boss extends BaseMob {
 
         this.drops = List.of();
         this.extraInfo = List.of();
-
-        this.strength = MobStrength.BOSS;
     }
+
 }
