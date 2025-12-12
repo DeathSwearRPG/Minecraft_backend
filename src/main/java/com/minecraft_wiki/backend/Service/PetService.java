@@ -1,6 +1,6 @@
 package com.minecraft_wiki.backend.Service;
 
-import com.minecraft_wiki.backend.Model.Boss;
+import com.minecraft_wiki.backend.Model.enums.MobStrength;
 import com.minecraft_wiki.backend.Model.Pet;
 import org.springframework.stereotype.Service;
 
@@ -14,46 +14,31 @@ public class PetService {
                     UUID.randomUUID(),
                     "Wolf",
                     "A loyal companion that attacks hostile mobs.",
-                    "Aggressive when owner is hurt, follows player.",
-                    20,
-                    4,
-                    4
+                    MobStrength.NORMAL
             ),
             new Pet(
                     UUID.randomUUID(),
                     "Cat",
                     "A friendly pet that scares away creepers.",
-                    "Independent, avoids danger, follows when tamed.",
-                    10,
-                    0,
-                    2
+                    MobStrength.WEAK
             ),
             new Pet(
                     UUID.randomUUID(),
                     "Parrot",
                     "A colorful pet that mimics nearby mob sounds.",
-                    "Passive, perches on player's shoulder.",
-                    6,
-                    0,
-                    1
+                    MobStrength.ELITE
             ),
             new Pet(
                     UUID.randomUUID(),
                     "Iron Golem",
                     "A large protector mob that defends villages.",
-                    "Neutral unless provoked, protects owner.",
-                    100,
-                    12,
-                    15
+                    MobStrength.NORMAL
             ),
             new Pet(
                     UUID.randomUUID(),
                     "Snow Golem",
                     "A living snowman that throws snowballs.",
-                    "Ranged attacks, creates snow layers.",
-                    4,
-                    0,
-                    1
+                    MobStrength.ELITE
             )
     );
 
@@ -63,7 +48,7 @@ public class PetService {
 
     public Pet getPetById(UUID petId) {
         return pets.stream()
-                .filter(pet -> pet.getPetId().equals(petId))
+                .filter(pet -> pet.getMobId().equals(petId))
                 .findFirst()
                 .orElse(null);
     }

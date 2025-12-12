@@ -1,5 +1,6 @@
 package com.minecraft_wiki.backend.Service;
 
+import com.minecraft_wiki.backend.Model.BaseMob;
 import com.minecraft_wiki.backend.Model.Boss;
 import org.springframework.stereotype.Service;
 
@@ -15,24 +16,21 @@ public class BossService {
                     "Ender Dragon",
                     200,
                     20,
-                    15,
-                    "Large"
+                    15
             ),
             new Boss(
                     UUID.randomUUID(),
                     "Wither",
                     300,
                     30,
-                    20,
-                    "Medium"
+                    20
             ),
             new Boss(
                     UUID.randomUUID(),
                     "Warden",
                     500,
                     50,
-                    30,
-                    "Large"
+                    30
             )
     );
 
@@ -42,7 +40,7 @@ public class BossService {
 
     public Boss getBossById(UUID bossId) {
         return bosses.stream()
-                .filter(boss -> boss.getBossId().equals(bossId))
+                .filter(boss -> boss.getMobId().equals(bossId))
                 .findFirst()
                 .orElse(null);
     }
