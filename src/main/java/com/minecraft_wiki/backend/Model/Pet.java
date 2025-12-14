@@ -14,7 +14,6 @@ public class Pet extends BaseMob {
         this.type = MobType.PET;
     }
 
-    // Используем удобный конструктор как в BossService
     public Pet(UUID mobId,
                String name,
                String description,
@@ -26,11 +25,11 @@ public class Pet extends BaseMob {
         this.strength = strength;
 
         this.stats = new MobStats(
-                5,   // damage
-                1,   // damagePerLevel
-                20,  // health
-                2,   // health per level
-                0    // armor
+                5,
+                1,
+                20,
+                2,
+                0
         );
 
         this.drops = List.of();
