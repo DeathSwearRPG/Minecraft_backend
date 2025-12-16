@@ -1,5 +1,25 @@
 spring:
   application:
     name: minecraft-backend
+
   profiles:
     active: local
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/project_db
+    username: postgres
+    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+  flyway:
+    enabled: true
+
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: always
