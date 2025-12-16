@@ -1,3 +1,5 @@
 spring:
   application:
     name: minecraft-backend
+  profiles:
+    active: local
