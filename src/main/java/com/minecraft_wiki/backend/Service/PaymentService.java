@@ -3,86 +3,63 @@ package com.minecraft_wiki.backend.Service;
 import com.minecraft_wiki.backend.Client.YooKassaClient;
 import com.minecraft_wiki.backend.Model.payment.CreatePaymentRequest;
 import com.minecraft_wiki.backend.Model.payment.PaymentResponse;
+import com.minecraft_wiki.backend.Model.payment.entity.PaymentEntity;
+import com.minecraft_wiki.backend.Model.payment.entity.ProductEntity;
+import com.minecraft_wiki.backend.Repo.payment.PaymentRepository;
+import com.minecraft_wiki.backend.Repo.payment.ProductRepository;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
 public class PaymentService {
 
     private final YooKassaClient yooKassaClient;
+    private final ProductRepository productRepository;
+    private final PaymentRepository paymentRepository;
 
-    // ВРЕМЕННО каталог продуктов позже уйдёт в БД
-    private static final Map<String, ProductConfig> PRODUCTS = Map.of(
-
-            //  УРОВЕНЬ 1 
-            "BLESSED_30D", new ProductConfig(
-                    new BigDecimal("150.00"),
-                    "RUB",
-                    30,
-                    "blessed"
-            ),
-
-            //  УРОВЕНЬ 2 
-            "CHOSEN_LIGHT_30D", new ProductConfig(
-                    new BigDecimal("250.00"),
-                    "RUB",
-                    30,
-                    "chosen_light"
-            ),
-            "CHOSEN_DARK_30D", new ProductConfig(
-                    new BigDecimal("250.00"),
-                    "RUB",
-                    30,
-                    "chosen_dark"
-            ),
-            "CHOSEN_WAR_30D", new ProductConfig(
-                    new BigDecimal("250.00"),
-                    "RUB",
-                    30,
-                    "chosen_war"
-            ),
-
-            //  УРОВЕНЬ 3 
-            "OATH_CHOSEN_30D", new ProductConfig(
-                    new BigDecimal("350.00"),
-                    "RUB",
-                    30,
-                    "oath_chosen"
-            )
-    );
-
-
-
-    public PaymentService(YooKassaClient yooKassaClient) {
+    public PaymentService(
+            YooKassaClient yooKassaClient,
+            ProductRepository productRepository,
+            PaymentRepository paymentRepository
+    ) {
         this.yooKassaClient = yooKassaClient;
+        this.productRepository = productRepository;
+        this.paymentRepository = paymentRepository;
     }
 
     public PaymentResponse createPayment(CreatePaymentRequest request) {
 
-        ProductConfig product = PRODUCTS.get(request.getProductCode());
-        if (product == null) {
-            throw new IllegalArgumentException("Unknown productCode: " + request.getProductCode());
-        }
+        ProductEntity product = productRepository.findById(request.getProductCode())
+                .orElseThrow(() -> new IllegalArgumentException("Unknown product"));
 
         UUID paymentId = UUID.randomUUID();
 
-        return yooKassaClient.createPayment(
-                paymentId,
-                request.getProductCode(),
-                request.getPlayerName(),
-                product.price(),
-                product.currency()
-        );
-    }
+        PaymentEntity payment = new PaymentEntity();
+        payment.setId(paymentId);
+        payment.setProductCode(product.getCode());
+        payment.setPlayerName(request.getPlayerName());
+        payment.setStatus("NEW");
+        payment.setAmountValue(product.getPriceValue());
+        payment.setCurrency(product.getCurrency());
 
-    // Внутренний record — НЕ DTO
-    private record ProductConfig(
-            BigDecimal price,
-            String currency,
-            int durationDays,
-            String privilegeCode
-    ) {}
+        paymentRepository.save(payment);
+
+        PaymentResponse response = yooKassaClient.createPayment(
+                paymentId,
+                product.getCode(),
+                request.getPlayerName(),
+                product.getPriceValue(),
+                product.getCurrency()
+        );
+
+
+        payment.setStatus(response.getStatus());
+        payment.setYookassaPaymentId(response.getPaymentId());
+        payment.setConfirmationUrl(response.getConfirmationUrl());
+
+        paymentRepository.save(payment);
+
+        return response;
+    }
 }
