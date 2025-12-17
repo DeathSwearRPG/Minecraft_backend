@@ -33,10 +33,10 @@ public class PaymentService {
         ProductEntity product = productRepository.findById(request.getProductCode())
                 .orElseThrow(() -> new IllegalArgumentException("Unknown product"));
 
-        UUID paymentId = UUID.randomUUID();
+        UUID internalPaymentId = UUID.randomUUID();
 
         PaymentEntity payment = new PaymentEntity();
-        payment.setId(paymentId);
+        payment.setId(internalPaymentId);
         payment.setProductCode(product.getCode());
         payment.setPlayerName(request.getPlayerName());
         payment.setStatus("NEW");
@@ -45,21 +45,27 @@ public class PaymentService {
 
         paymentRepository.save(payment);
 
-        PaymentResponse response = yooKassaClient.createPayment(
-                paymentId,
+        // вызываем YooKassa
+        PaymentResponse ykResponse = yooKassaClient.createPayment(
+                internalPaymentId,
                 product.getCode(),
                 request.getPlayerName(),
                 product.getPriceValue(),
                 product.getCurrency()
         );
 
-
-        payment.setStatus(response.getStatus());
-        payment.setYookassaPaymentId(response.getPaymentId());
-        payment.setConfirmationUrl(response.getConfirmationUrl());
+        // сохраняем ДАННЫЕ ОТ YooKassa В БД
+        payment.setStatus(ykResponse.getStatus());
+        payment.setYookassaPaymentId(ykResponse.getPaymentId()); // ТОЛЬКО В БД
+        payment.setConfirmationUrl(ykResponse.getConfirmationUrl());
 
         paymentRepository.save(payment);
 
-        return response;
+        return new PaymentResponse(
+                internalPaymentId.toString(), // ← КЛЮЧЕВО
+                payment.getStatus(),
+                payment.getConfirmationUrl()
+        );
     }
+
 }
