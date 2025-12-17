@@ -2,19 +2,14 @@ package com.minecraft_wiki.backend.Model.payment;
 
 public class CreatePaymentRequest {
 
-    private String value;
-    private String orderId;
-    private String userId;
+    private String productCode;
+    private String playerName;
 
-    public String getValue() {
-        return value;
+    public String getProductCode() {
+        return productCode;
     }
 
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public String getUserId() {
-        return userId;
+    public String getPlayerName() {
+        return playerName;
     }
 }

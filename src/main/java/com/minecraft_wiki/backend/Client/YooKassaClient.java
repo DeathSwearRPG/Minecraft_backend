@@ -1,12 +1,12 @@
 package com.minecraft_wiki.backend.Client;
 
-import com.minecraft_wiki.backend.Model.payment.CreatePaymentRequest;
 import com.minecraft_wiki.backend.Model.payment.PaymentResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,28 +25,36 @@ public class YooKassaClient {
         this.secretKey = secretKey;
     }
 
-    public PaymentResponse createPayment(CreatePaymentRequest request) {
+    public PaymentResponse createPayment(
+            UUID paymentId,
+            String productCode,
+            String playerName,
+            BigDecimal amount,
+            String currency
+    ) {
 
         Map<String, Object> payload = Map.of(
                 "amount", Map.of(
-                        "value", request.getValue(),
-                        "currency", "RUB"
+                        "value", amount.toPlainString(),
+                        "currency", currency
                 ),
                 "capture", true,
                 "confirmation", Map.of(
                         "type", "redirect",
                         "return_url", "https://example.com/success"
                 ),
+                "description", "Minecraft privilege: " + productCode,
                 "metadata", Map.of(
-                        "orderId", request.getOrderId(),
-                        "userId", request.getUserId()
+                        "paymentId", paymentId.toString(),
+                        "productCode", productCode,
+                        "playerName", playerName
                 )
         );
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBasicAuth(shopId, secretKey);
-        headers.add("Idempotence-Key", UUID.randomUUID().toString());
+        headers.add("Idempotence-Key", paymentId.toString());
 
         HttpEntity<Map<String, Object>> entity =
                 new HttpEntity<>(payload, headers);
