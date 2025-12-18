@@ -78,7 +78,7 @@ public class YooKassaWebhookService {
         privilege.setEndsAt(
                 Instant.now().plus(30, ChronoUnit.DAYS)
         );
-        privilege.setStatus("ACTIVE");
+        privilege.setStatus("PENDING_APPLY");
         privilege.setSourcePaymentId(payment.getId());
 
         privilegeRepository.save(privilege);
