@@ -9,6 +9,7 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class SkillProgression {
     private int unlockLevel;
     private int maxLevel;

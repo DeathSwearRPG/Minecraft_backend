@@ -2,12 +2,18 @@ package com.minecraft_wiki.backend.Model;
 
 import com.minecraft_wiki.backend.Model.enums.MobStrength;
 import com.minecraft_wiki.backend.Model.enums.MobType;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 import java.util.UUID;
 
-@Data
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 
 public abstract class BaseMob {
     protected UUID mobId;

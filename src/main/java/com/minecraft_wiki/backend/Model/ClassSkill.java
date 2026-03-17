@@ -1,16 +1,15 @@
 package com.minecraft_wiki.backend.Model;
 
 import com.minecraft_wiki.backend.Model.enums.TriggerType;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 import java.util.UUID;
 
-@Data
-@AllArgsConstructor
+@Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 
 public class ClassSkill {
     private UUID skillId;
