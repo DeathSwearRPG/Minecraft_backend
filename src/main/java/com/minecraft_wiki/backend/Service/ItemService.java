@@ -13,20 +13,20 @@ import java.util.UUID;
 public class ItemService {
 
     private final List<Item> items = List.of(
-            new Item(UUID.randomUUID(),
-                    "Axe",
-                    "pick axe",
-                    "https:/erhgrekwefw",
-                    ItemType.TOOL,
-                    ItemRarity.LEGENDARY,
-                    SpecialCharacteristic.SCALABLE,
-                    new ItemStats(
-                            15,
-                            null,
-                            120,
-                            20
-                    ),
-                    new CraftRecipe(List.of(
+            Item.builder()
+                    .itemId(UUID.randomUUID())
+                    .name("Axe")
+                    .description("pick axe")
+                    .imageUrl("https:/erhgrekwefw")
+                    .itemType(ItemType.TOOL)
+                    .itemRarity(ItemRarity.LEGENDARY)
+                    .specialCharacteristic(SpecialCharacteristic.SCALABLE)
+                    .itemStats(ItemStats.builder()
+                            .gatheringSpeed(15)
+                            .damage(120)
+                            .armor(20)
+                            .build())
+                    .craftRecipe(new CraftRecipe(List.of(
                             new CraftSlot(MockItems.STONE),
                             new CraftSlot(MockItems.STONE),
                             new CraftSlot(MockItems.STONE),
@@ -36,22 +36,24 @@ public class ItemService {
                             new CraftSlot(null),
                             new CraftSlot(MockItems.STICK),
                             new CraftSlot(null)
-                    ))
-            ),
-            new Item(UUID.randomUUID(),
-                    "Helmet",
-                    "wear",
-                    "https:/erhgrekwefw",
-                    ItemType.ARMOR,
-                    ItemRarity.MYTHIC,
-                    SpecialCharacteristic.SCALABLE,
-                    new ItemStats(
-                            15,
-                            null,
-                            120,
-                            20
-                    ),
-                    new CraftRecipe(List.of(
+                    )))
+                    .build(),
+
+            Item.builder()
+                    .itemId(UUID.randomUUID())
+                    .name("Helmet")
+                    .description("wear")
+                    .imageUrl("https:/erhgrekwefw")
+                    .itemType(ItemType.ARMOR)
+                    .itemRarity(ItemRarity.MYTHIC)
+                    .specialCharacteristic(SpecialCharacteristic.SCALABLE)
+                    .itemStats(ItemStats.builder()
+                            .gatheringSpeed(15)
+                            .requiredLevel(null)
+                            .damage(120)
+                            .armor(20)
+                            .build())
+                    .craftRecipe(new CraftRecipe(List.of(
                             new CraftSlot(MockItems.STONE),
                             new CraftSlot(MockItems.STONE),
                             new CraftSlot(MockItems.STONE),
@@ -61,22 +63,22 @@ public class ItemService {
                             new CraftSlot(null),
                             new CraftSlot(MockItems.STICK),
                             new CraftSlot(null)
-                    ))
-            ),
-            new Item(UUID.randomUUID(),
-                    "Sword",
-                    "pick axe",
-                    "https:/erhgrekwefw",
-                    ItemType.WEAPON,
-                    ItemRarity.EPIC,
-                    null,
-                    new ItemStats(
-                            15,
-                            null,
-                            120,
-                            20
-                    ),
-                    new CraftRecipe(List.of(
+                    )))
+                    .build(),
+
+            Item.builder()
+                    .itemId(UUID.randomUUID())
+                    .name("Sword")
+                    .description("pick axe")
+                    .imageUrl("https:/erhgrekwefw")
+                    .itemType(ItemType.WEAPON)
+                    .itemRarity(ItemRarity.EPIC)
+                    .itemStats(ItemStats.builder()
+                            .gatheringSpeed(15)
+                            .damage(120)
+                            .armor(20)
+                            .build())
+                    .craftRecipe(new CraftRecipe(List.of(
                             new CraftSlot(MockItems.STONE),
                             new CraftSlot(MockItems.STONE),
                             new CraftSlot(MockItems.STONE),
@@ -86,8 +88,8 @@ public class ItemService {
                             new CraftSlot(null),
                             new CraftSlot(MockItems.STICK),
                             new CraftSlot(null)
-                    ))
-            )
+                    )))
+                    .build()
     );
 
     public List<Item> getItems(ItemType itemType, ItemRarity itemRarity, SpecialCharacteristic specialCharacteristic) {

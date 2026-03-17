@@ -1,37 +1,15 @@
 package com.minecraft_wiki.backend.Model;
 
 import com.minecraft_wiki.backend.Model.enums.MobStrength;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-import java.util.List;
-import java.util.UUID;
-
-@Data
+@Getter
+@AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 
 public class Boss extends BaseMob {
-
-    public Boss(UUID mobId,
-                String name,
-                int health,
-                int armor,
-                int damage) {
-
-        this.mobId = mobId;
-        this.name = name;
-
-        this.stats = new MobStats(
-                damage,
-                0,
-                health,
-                0,
-                armor
-        );
-
-        this.drops = List.of();
-        this.extraInfo = List.of();
-
-        this.strength = MobStrength.BOSS;
-    }
+    @Builder.Default
+    private MobStrength strength = MobStrength.BOSS;
 }

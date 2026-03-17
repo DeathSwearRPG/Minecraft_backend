@@ -3,10 +3,12 @@ package com.minecraft_wiki.backend.Service;
 import com.minecraft_wiki.backend.Model.BaseMob;
 import com.minecraft_wiki.backend.Model.Boss;
 import com.minecraft_wiki.backend.Model.Mob;
+import com.minecraft_wiki.backend.Model.MobStats;
 import com.minecraft_wiki.backend.Model.enums.MobStrength;
 import com.minecraft_wiki.backend.Model.enums.MobType;
 import com.minecraft_wiki.backend.Repo.MobRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 import java.sql.Array;
@@ -49,36 +51,42 @@ public class MobService {
 
         for (Object[] r : rows) {
 
-            BaseMob mob = new Mob(
-                    UUID.fromString(r[0].toString()),
-                    (String) r[1],
-                    ((Number) r[9]).intValue(),
-                    ((Number) r[11]).intValue(),
-                    ((Number) r[7]).intValue()
-            );
-
-            mob.setDescription((String) r[2]);
-            mob.setImageUrl((String) r[3]);
-            mob.setLocationInfo((String) r[4]);
-            mob.setStrength(r[5] != null ? MobStrength.valueOf(r[5].toString()) : null);
-            mob.setType(r[6] != null ? MobType.valueOf(r[6].toString()) : null);
-
-            Array sqlArray = (Array) r[12];
-            try {
-                mob.setExtraInfo(
-                        sqlArray != null
-                                ? List.of((String[]) sqlArray.getArray())
-                                : List.of()
-                );
-            } catch (SQLException e) {
-                throw new RuntimeException("Failed to read mob extraInfo", e);
-            }
+            BaseMob mob = Mob.builder()
+                    .mobId(UUID.fromString(r[0].toString()))
+                    .name((String) r[1])
+                    .description((String) r[2])
+                    .imageUrl((String) r[3])
+                    .locationInfo((String) r[4])
+                    .strength(r[5] != null ? MobStrength.valueOf(r[5].toString()) : null)
+                    .type(r[6] != null ? MobType.valueOf(r[6].toString()) : null)
+                    .extraInfo(readExtraInfo(r[12]))
+                    .stats(MobStats.builder()
+                            .baseHealth(((Number) r[9]).intValue())
+                            .armor(((Number) r[11]).intValue())
+                            .baseDamage(((Number) r[7]).intValue())
+                            .damagePerLevel(0)
+                            .healthPerLevel(0)
+                            .build())
+                    .build();
 
             result.add(mob);
         }
 
         return result;
 
+    }
+
+    private List<String> readExtraInfo(Object value) {
+        if (value == null) {
+            return List.of();
+        }
+
+        Array sqlArray = (Array) value;
+        try {
+            return List.of((String[]) sqlArray.getArray());
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to read mob extraInfo", e);
+        }
     }
 
     public List<BaseMob> loadMobsFromDb() {

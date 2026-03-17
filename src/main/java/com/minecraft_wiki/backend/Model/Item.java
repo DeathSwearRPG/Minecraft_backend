@@ -3,15 +3,14 @@ package com.minecraft_wiki.backend.Model;
 import com.minecraft_wiki.backend.Model.enums.ItemRarity;
 import com.minecraft_wiki.backend.Model.enums.ItemType;
 import com.minecraft_wiki.backend.Model.enums.SpecialCharacteristic;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 
 public class Item {
     private UUID itemId;
