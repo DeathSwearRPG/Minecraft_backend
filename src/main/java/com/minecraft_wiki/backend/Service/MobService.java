@@ -1,14 +1,11 @@
 package com.minecraft_wiki.backend.Service;
 
-import com.minecraft_wiki.backend.Model.BaseMob;
-import com.minecraft_wiki.backend.Model.Boss;
 import com.minecraft_wiki.backend.Model.Mob;
 import com.minecraft_wiki.backend.Model.MobStats;
 import com.minecraft_wiki.backend.Model.enums.MobStrength;
 import com.minecraft_wiki.backend.Model.enums.MobType;
 import com.minecraft_wiki.backend.Repo.MobRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 import java.sql.Array;
@@ -23,18 +20,18 @@ public class MobService {
 
     private final MobRepository mobRepository;
 
-    public List<BaseMob> getAllMobs(MobStrength strength, MobType type) {
+    public List<Mob> getAllMobs(MobStrength strength, MobType type) {
         return loadMobsFromDb(strength, type);
     }
 
-    public BaseMob getMobById(UUID id) {
+    public Mob getMobById(UUID mobId) {
         return loadMobsFromDb().stream()
-                .filter(m -> m.getMobId().equals(id))
+                .filter(m -> m.getMobId().equals(mobId))
                 .findFirst()
                 .orElse(null);
     }
 
-    public List<BaseMob> loadMobsFromDb(
+    public List<Mob> loadMobsFromDb(
             MobStrength strength,
             MobType type
     ) {
@@ -47,11 +44,11 @@ public class MobService {
             rows = List.of();
         }
 
-        List<BaseMob> result = new ArrayList<>();
+        List<Mob> result = new ArrayList<>();
 
         for (Object[] r : rows) {
 
-            BaseMob mob = Mob.builder()
+            Mob mob = Mob.builder()
                     .mobId(UUID.fromString(r[0].toString()))
                     .name((String) r[1])
                     .description((String) r[2])
@@ -89,7 +86,7 @@ public class MobService {
         }
     }
 
-    public List<BaseMob> loadMobsFromDb() {
+    public List<Mob> loadMobsFromDb() {
         return loadMobsFromDb(null, null);
     }
 }

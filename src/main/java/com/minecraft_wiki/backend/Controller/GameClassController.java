@@ -1,5 +1,8 @@
 package com.minecraft_wiki.backend.Controller;
 
+import com.minecraft_wiki.backend.DTO.GameClassDetailsDto;
+import com.minecraft_wiki.backend.DTO.GameClassResponseDto;
+import com.minecraft_wiki.backend.Mapper.GameClassMapper;
 import com.minecraft_wiki.backend.Model.GameClass;
 import com.minecraft_wiki.backend.Service.GameClassService;
 import lombok.RequiredArgsConstructor;
@@ -18,15 +21,16 @@ import java.util.UUID;
 public class GameClassController {
 
     private final GameClassService gameClassService;
+    private final GameClassMapper gameClassMapper;
 
     @GetMapping
-    public List<GameClass> getClasses() {
-        return gameClassService.getClasses();
+    public List<GameClassResponseDto> getClasses() {
+        return gameClassMapper.toResponseDtoList(gameClassService.getClasses());
     }
 
     @GetMapping("/{id}")
-    public GameClass getClassById(@PathVariable("id") UUID gameClassId) {
-        return gameClassService.getClassById(gameClassId);
+    public GameClassDetailsDto getClassById(@PathVariable("id") UUID gameClassId) {
+        return gameClassMapper.toDetailsDto(gameClassService.getClassById(gameClassId));
     }
 
 }
