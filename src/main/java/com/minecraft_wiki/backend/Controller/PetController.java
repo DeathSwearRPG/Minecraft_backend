@@ -1,5 +1,9 @@
 package com.minecraft_wiki.backend.Controller;
 
+import com.minecraft_wiki.backend.DTO.PetDetailsDto;
+import com.minecraft_wiki.backend.DTO.PetResponseDto;
+import com.minecraft_wiki.backend.Mapper.MobMapper;
+import com.minecraft_wiki.backend.Mapper.PetMapper;
 import com.minecraft_wiki.backend.Model.Pet;
 import com.minecraft_wiki.backend.Service.PetService;
 import lombok.RequiredArgsConstructor;
@@ -18,15 +22,16 @@ import java.util.UUID;
 public class PetController {
 
     private final PetService petService;
+    private final PetMapper petMapper;
 
     @GetMapping
-    public List<Pet> getAllPets() {
-        return petService.getPets();
+    public List<PetResponseDto> getAllPets() {
+        return petMapper.toResponseDtoList(petService.getPets());
     }
 
     @GetMapping("/{id}")
-    public Pet getPetById(@PathVariable("id") UUID petId) {
-        return petService.getPetById(petId);
+    public PetDetailsDto getPetById(@PathVariable("id") UUID petId) {
+        return petMapper.toDetailsDto(petService.getPetById(petId));
     }
 
 }
