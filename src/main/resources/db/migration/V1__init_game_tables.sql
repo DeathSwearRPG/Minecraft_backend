@@ -1,3 +1,5 @@
+CREATE SCHEMA IF NOT EXISTS game;
+
 CREATE TABLE game.items (
                             id UUID PRIMARY KEY,
                             name TEXT NOT NULL,
