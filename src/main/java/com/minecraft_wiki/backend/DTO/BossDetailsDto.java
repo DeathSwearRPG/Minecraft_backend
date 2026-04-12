@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
@@ -18,7 +17,7 @@ import java.util.UUID;
 @Builder
 
 public class BossDetailsDto {
-    private UUID mobId;
+    private String mobId;
 
     private String name;
     private String description;

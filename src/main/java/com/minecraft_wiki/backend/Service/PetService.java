@@ -3,58 +3,32 @@ package com.minecraft_wiki.backend.Service;
 import com.minecraft_wiki.backend.Model.enums.MobStrength;
 import com.minecraft_wiki.backend.Model.Pet;
 import com.minecraft_wiki.backend.Model.enums.MobType;
+import com.minecraft_wiki.backend.Repo.PetMongoRepository;
+import lombok.AllArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
+@AllArgsConstructor
+
 public class PetService {
-    private final List<Pet> pets = List.of(
-            Pet.builder()
-                    .mobId(UUID.randomUUID())
-                    .name("Wolf")
-                    .description("A loyal companion that attacks hostile mobs.")
-                    .strength(MobStrength.NORMAL)
-                    .build(),
 
-            Pet.builder()
-                    .mobId(UUID.randomUUID())
-                    .name("Cat")
-                    .description("A friendly pet that scares away creepers.")
-                    .strength(MobStrength.NORMAL)
-                    .build(),
-
-            Pet.builder()
-                    .mobId(UUID.randomUUID())
-                    .name("Parrot")
-                    .description("A colorful pet that mimics nearby mob sounds.")
-                    .strength(MobStrength.WEAK)
-                    .build(),
-
-            Pet.builder()
-                    .mobId(UUID.randomUUID())
-                    .name("Iron Golem")
-                    .description("A large protector mob that defends villages.")
-                    .strength(MobStrength.NORMAL)
-                    .build(),
-
-            Pet.builder()
-                    .mobId(UUID.randomUUID())
-                    .name("Snow Golem")
-                    .description("A living snowman that throws snowballs.")
-                    .strength(MobStrength.WEAK)
-                    .build()
-    );
+    private final PetMongoRepository petMongoRepository;
 
     public List<Pet> getPets() {
-        return pets;
+        return petMongoRepository.findByType(MobType.PET);
     }
 
-    public Pet getPetById(UUID petId) {
-        return pets.stream()
-                .filter(pet -> pet.getMobId().equals(petId))
-                .findFirst()
-                .orElse(null);
+    public Pet getPetById(String petId) {
+        try {
+            ObjectId objectId = new ObjectId(petId);
+
+            return petMongoRepository.findByMobIdAndType(objectId, MobType.PET)
+                    .orElseThrow(() -> new RuntimeException("boss doesn't exist " + petId));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid boss id format: " + petId);
+        }
     }
 }

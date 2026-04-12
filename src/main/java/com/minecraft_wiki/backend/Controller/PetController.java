@@ -2,9 +2,7 @@ package com.minecraft_wiki.backend.Controller;
 
 import com.minecraft_wiki.backend.DTO.PetDetailsDto;
 import com.minecraft_wiki.backend.DTO.PetResponseDto;
-import com.minecraft_wiki.backend.Mapper.MobMapper;
 import com.minecraft_wiki.backend.Mapper.PetMapper;
-import com.minecraft_wiki.backend.Model.Pet;
 import com.minecraft_wiki.backend.Service.PetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/pets")
@@ -30,7 +27,7 @@ public class PetController {
     }
 
     @GetMapping("/{id}")
-    public PetDetailsDto getPetById(@PathVariable("id") UUID petId) {
+    public PetDetailsDto getPetById(@PathVariable("id") String petId) {
         return petMapper.toDetailsDto(petService.getPetById(petId));
     }
 

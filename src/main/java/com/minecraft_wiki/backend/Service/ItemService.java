@@ -4,107 +4,47 @@ import com.minecraft_wiki.backend.Model.*;
 import com.minecraft_wiki.backend.Model.enums.ItemRarity;
 import com.minecraft_wiki.backend.Model.enums.ItemType;
 import com.minecraft_wiki.backend.Model.enums.SpecialCharacteristic;
+import com.minecraft_wiki.backend.Repo.ItemMongoRepository;
+import lombok.AllArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
+@AllArgsConstructor
 public class ItemService {
 
-    private final List<Item> items = List.of(
-            Item.builder()
-                    .itemId(UUID.randomUUID())
-                    .name("Axe")
-                    .description("pick axe")
-                    .imageUrl("https:/erhgrekwefw")
-                    .itemType(ItemType.TOOL)
-                    .itemRarity(ItemRarity.LEGENDARY)
-                    .specialCharacteristic(SpecialCharacteristic.SCALABLE)
-                    .itemStats(ItemStats.builder()
-                            .gatheringSpeed(15)
-                            .damage(120)
-                            .armor(20)
-                            .build())
-                    .craftRecipe(new CraftRecipe(List.of(
-                            new CraftSlot(MockItems.STONE),
-                            new CraftSlot(MockItems.STONE),
-                            new CraftSlot(MockItems.STONE),
-                            new CraftSlot(null),
-                            new CraftSlot(MockItems.STICK),
-                            new CraftSlot(null),
-                            new CraftSlot(null),
-                            new CraftSlot(MockItems.STICK),
-                            new CraftSlot(null)
-                    )))
-                    .build(),
+    private final ItemMongoRepository itemMongoRepository;
 
-            Item.builder()
-                    .itemId(UUID.randomUUID())
-                    .name("Helmet")
-                    .description("wear")
-                    .imageUrl("https:/erhgrekwefw")
-                    .itemType(ItemType.ARMOR)
-                    .itemRarity(ItemRarity.MYTHIC)
-                    .specialCharacteristic(SpecialCharacteristic.SCALABLE)
-                    .itemStats(ItemStats.builder()
-                            .gatheringSpeed(15)
-                            .requiredLevel(null)
-                            .damage(120)
-                            .armor(20)
-                            .build())
-                    .craftRecipe(new CraftRecipe(List.of(
-                            new CraftSlot(MockItems.STONE),
-                            new CraftSlot(MockItems.STONE),
-                            new CraftSlot(MockItems.STONE),
-                            new CraftSlot(null),
-                            new CraftSlot(MockItems.STICK),
-                            new CraftSlot(null),
-                            new CraftSlot(null),
-                            new CraftSlot(MockItems.STICK),
-                            new CraftSlot(null)
-                    )))
-                    .build(),
+    public List<Item> getItems(ItemRarity rarity, ItemType type, SpecialCharacteristic characteristic) {
+        if (rarity != null && type != null && characteristic != null) {
+            return itemMongoRepository.findByItemRarityAndItemTypeAndSpecialCharacteristic(rarity, type, characteristic);
+        }
 
-            Item.builder()
-                    .itemId(UUID.randomUUID())
-                    .name("Sword")
-                    .description("pick axe")
-                    .imageUrl("https:/erhgrekwefw")
-                    .itemType(ItemType.WEAPON)
-                    .itemRarity(ItemRarity.EPIC)
-                    .itemStats(ItemStats.builder()
-                            .gatheringSpeed(15)
-                            .damage(120)
-                            .armor(20)
-                            .build())
-                    .craftRecipe(new CraftRecipe(List.of(
-                            new CraftSlot(MockItems.STONE),
-                            new CraftSlot(MockItems.STONE),
-                            new CraftSlot(MockItems.STONE),
-                            new CraftSlot(null),
-                            new CraftSlot(MockItems.STICK),
-                            new CraftSlot(null),
-                            new CraftSlot(null),
-                            new CraftSlot(MockItems.STICK),
-                            new CraftSlot(null)
-                    )))
-                    .build()
-    );
+        if (rarity != null) {
+            return itemMongoRepository.findByItemRarity(rarity);
+        }
 
-    public List<Item> getItems(ItemType itemType, ItemRarity itemRarity, SpecialCharacteristic specialCharacteristic) {
-        return items
-                .stream()
-                .filter(item -> itemType == null || item.getItemType() == itemType)
-                .filter(item -> itemRarity == null || item.getItemRarity() == itemRarity)
-                .filter(item -> specialCharacteristic == null || item.getSpecialCharacteristic() == specialCharacteristic)
-                .toList();
+        if (type != null) {
+            return itemMongoRepository.findByItemType(type);
+        }
+
+        if (characteristic != null) {
+            return itemMongoRepository.findBySpecialCharacteristic(characteristic);
+        }
+
+        return itemMongoRepository.findAll();
     }
 
-    public Item getItemById(UUID itemId) {
-        return items.stream()
-                .filter(item -> item.getItemId().equals(itemId))
-                .findFirst()
-                .orElse(null);
+    public Item getItemById(String itemId) {
+        try {
+            ObjectId objectId = new ObjectId(itemId);
+
+            return itemMongoRepository.findById(objectId)
+                    .orElseThrow(() -> new RuntimeException("item doesn't exist " + itemId));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid item id format: " + itemId);
+        }
     }
 }

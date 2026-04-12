@@ -15,7 +15,7 @@ public class PetMapper {
         }
 
         return PetResponseDto.builder()
-                .mobId(pet.getMobId())
+                .mobId(pet.getMobId().toHexString())
                 .name(pet.getName())
                 .imageUrl(pet.getImageUrl())
                 .build();
@@ -27,7 +27,7 @@ public class PetMapper {
         }
 
         return PetDetailsDto.builder()
-                .mobId(pet.getMobId())
+                .mobId(pet.getMobId().toHexString())
                 .name(pet.getName())
                 .description(pet.getDescription())
                 .imageUrl(pet.getImageUrl())

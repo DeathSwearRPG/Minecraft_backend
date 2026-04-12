@@ -15,7 +15,7 @@ public class ItemMapper {
         }
 
         return ItemResponseDto.builder()
-                .itemId(item.getItemId())
+                .itemId(item.getItemId().toHexString())
                 .name(item.getName())
                 .imageUrl(item.getImageUrl())
                 .build();
@@ -26,7 +26,7 @@ public class ItemMapper {
             return null;
         }
         return ItemDetailsDto.builder()
-                .itemId(item.getItemId())
+                .itemId(item.getItemId().toHexString())
                 .name(item.getName())
                 .description(item.getDescription())
                 .imageUrl(item.getImageUrl())

@@ -18,7 +18,7 @@ import java.util.UUID;
 @Builder
 
 public class MobDetailsDto {
-    private UUID mobId;
+    private String mobId;
 
     private String name;
     private String description;

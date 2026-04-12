@@ -13,7 +13,7 @@ import java.util.UUID;
 @Builder
 
 public class GameClassResponseDto {
-    private UUID classId;
+    private String classId;
     private String name;
     private String imageUrl;
 }

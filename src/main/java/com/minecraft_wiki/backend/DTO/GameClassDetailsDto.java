@@ -15,7 +15,7 @@ import java.util.UUID;
 @Builder
 
 public class GameClassDetailsDto {
-    private UUID classId;
+    private String classId;
     private String name;
     private String description;
     private String imageUrl;

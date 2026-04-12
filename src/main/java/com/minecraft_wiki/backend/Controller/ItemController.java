@@ -3,7 +3,6 @@ package com.minecraft_wiki.backend.Controller;
 import com.minecraft_wiki.backend.DTO.ItemDetailsDto;
 import com.minecraft_wiki.backend.DTO.ItemResponseDto;
 import com.minecraft_wiki.backend.Mapper.ItemMapper;
-import com.minecraft_wiki.backend.Model.Item;
 import com.minecraft_wiki.backend.Model.enums.ItemRarity;
 import com.minecraft_wiki.backend.Model.enums.ItemType;
 import com.minecraft_wiki.backend.Model.enums.SpecialCharacteristic;
@@ -12,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/items")
@@ -27,11 +25,11 @@ public class ItemController {
     public List<ItemResponseDto> getAllItems(@RequestParam(required = false) ItemType type,
                                              @RequestParam(required = false) ItemRarity rarity,
                                              @RequestParam(required = false) SpecialCharacteristic special) {
-        return itemMapper.toResponseDtoList(itemService.getItems(type,rarity,special));
+        return itemMapper.toResponseDtoList(itemService.getItems(rarity,type,special));
     }
 
     @GetMapping("/{id}")
-    public ItemDetailsDto getItemById(@PathVariable("id") UUID itemId) {
+    public ItemDetailsDto getItemById(@PathVariable("id") String itemId) {
         return itemMapper.toDetailsDto(itemService.getItemById(itemId));
     }
 

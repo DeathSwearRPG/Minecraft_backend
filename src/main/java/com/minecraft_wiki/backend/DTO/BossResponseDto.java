@@ -5,15 +5,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 
 public class BossResponseDto {
-    private UUID mobId;
+    private String mobId;
     private String name;
     private String imageUrl;
 }
