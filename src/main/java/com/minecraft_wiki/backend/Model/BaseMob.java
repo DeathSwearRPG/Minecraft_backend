@@ -6,9 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 
 import java.util.List;
-import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
@@ -16,7 +17,8 @@ import java.util.UUID;
 @SuperBuilder
 
 public abstract class BaseMob {
-    protected UUID mobId;
+    @Id
+    protected ObjectId mobId;
 
     protected String name;
     protected String description;

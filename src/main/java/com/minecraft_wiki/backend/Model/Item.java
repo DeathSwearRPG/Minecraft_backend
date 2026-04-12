@@ -4,6 +4,9 @@ import com.minecraft_wiki.backend.Model.enums.ItemRarity;
 import com.minecraft_wiki.backend.Model.enums.ItemType;
 import com.minecraft_wiki.backend.Model.enums.SpecialCharacteristic;
 import lombok.*;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.UUID;
 
@@ -11,9 +14,11 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Document(collection = "items")
 
 public class Item {
-    private UUID itemId;
+    @Id
+    private ObjectId itemId;
     private String name;
     private String description;
     private String imageUrl;

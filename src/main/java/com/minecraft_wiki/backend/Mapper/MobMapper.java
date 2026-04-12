@@ -15,7 +15,7 @@ public class MobMapper {
         }
 
         return MobResponseDto.builder()
-                .mobId(mob.getMobId())
+                .mobId(mob.getMobId().toHexString())
                 .name(mob.getName())
                 .imageUrl(mob.getImageUrl())
                 .build();
@@ -27,7 +27,7 @@ public class MobMapper {
         }
 
         return MobDetailsDto.builder()
-                .mobId(mob.getMobId())
+                .mobId(mob.getMobId().toHexString())
                 .name(mob.getName())
                 .description(mob.getDescription())
                 .imageUrl(mob.getImageUrl())

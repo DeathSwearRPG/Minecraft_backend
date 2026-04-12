@@ -16,7 +16,7 @@ public class BossMapper {
         }
 
         return BossResponseDto.builder()
-                .mobId(boss.getMobId())
+                .mobId(boss.getMobId().toHexString())
                 .name(boss.getName())
                 .imageUrl(boss.getImageUrl())
                 .build();
@@ -28,7 +28,7 @@ public class BossMapper {
         }
 
         return BossDetailsDto.builder()
-                .mobId(boss.getMobId())
+                .mobId(boss.getMobId().toHexString())
                 .name(boss.getName())
                 .description(boss.getDescription())
                 .imageUrl(boss.getImageUrl())

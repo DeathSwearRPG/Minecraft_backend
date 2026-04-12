@@ -3,13 +3,13 @@ package com.minecraft_wiki.backend.Model;
 import com.minecraft_wiki.backend.Model.enums.MobStrength;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
+@Document(collection = "mobs")
 
 public class Boss extends BaseMob {
-    @Builder.Default
-    private MobStrength strength = MobStrength.BOSS;
+
 }

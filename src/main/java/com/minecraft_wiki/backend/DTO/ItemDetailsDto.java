@@ -18,7 +18,7 @@ import java.util.UUID;
 @Builder
 
 public class ItemDetailsDto {
-    private UUID itemId;
+    private String itemId;
     private String name;
     private String description;
     private String imageUrl;

@@ -13,7 +13,7 @@ import java.util.UUID;
 @Builder
 
 public class PetResponseDto {
-    private UUID mobId;
+    private String mobId;
     private String name;
     private String imageUrl;
 }

@@ -13,7 +13,7 @@ import java.util.UUID;
 @Builder
 
 public class ItemResponseDto {
-    private UUID itemId;
+    private String itemId;
     private String name;
     private String imageUrl;
 }

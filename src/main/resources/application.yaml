@@ -1,18 +1,15 @@
 spring:
   application:
     name: minecraft-backend
-  datasource:
-    url: jdbc:postgresql://localhost:5432/project_db
-    username: postgres
-    password: postgres
 
-    jpa:
-      hibernate:
-        ddl-auto: validate
-      show-sql: true
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/minecraft_wiki
 
-    flyway:
-      enabled: true
+mongock:
+  migration-scan-package:
+    - com.minecraft_wiki.backend.config.migration
+  transactions: false
 
 server:
   error:

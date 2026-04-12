@@ -16,7 +16,7 @@ public class GameClassMapper {
         }
 
         return GameClassResponseDto.builder()
-                .classId(gameClass.getClassId())
+                .classId(gameClass.getClassId().toHexString())
                 .name(gameClass.getName())
                 .imageUrl(gameClass.getImageUrl())
                 .build();
@@ -28,7 +28,7 @@ public class GameClassMapper {
         }
 
         return GameClassDetailsDto.builder()
-                .classId(gameClass.getClassId())
+                .classId(gameClass.getClassId().toHexString())
                 .name(gameClass.getName())
                 .description(gameClass.getDescription())
                 .imageUrl(gameClass.getImageUrl())
