@@ -2,6 +2,7 @@ package com.minecraft_wiki.backend.Service;
 
 import com.minecraft_wiki.backend.Model.Boss;
 import com.minecraft_wiki.backend.Model.enums.MobStrength;
+import com.minecraft_wiki.backend.Model.enums.MobType;
 import com.minecraft_wiki.backend.Repo.BossMongoRepository;
 import lombok.AllArgsConstructor;
 import org.bson.types.ObjectId;
@@ -15,7 +16,10 @@ public class BossService {
 
     private final BossMongoRepository bossMongoRepository;
 
-    public List<Boss> getBosses() {
+    public List<Boss> getBosses(MobType type) {
+        if (type != null) {
+            return bossMongoRepository.findByStrengthAndType(MobStrength.BOSS, type);
+        }
         return bossMongoRepository.findByStrength(MobStrength.BOSS);
     }
 

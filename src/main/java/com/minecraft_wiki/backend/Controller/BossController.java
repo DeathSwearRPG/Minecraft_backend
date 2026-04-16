@@ -3,31 +3,49 @@ package com.minecraft_wiki.backend.Controller;
 import com.minecraft_wiki.backend.DTO.BossDetailsDto;
 import com.minecraft_wiki.backend.DTO.BossResponseDto;
 import com.minecraft_wiki.backend.Mapper.BossMapper;
+import com.minecraft_wiki.backend.Model.enums.MobType;
 import com.minecraft_wiki.backend.Service.BossService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/bosses")
 @RequiredArgsConstructor
+@Tag(name = "Bosses", description = "Operations related to bosses")
 
 public class BossController {
 
     private final BossService bossService;
     private final BossMapper bossMapper;
 
+    @Operation(summary = "Returns list of all bosses")
+    @ApiResponse(responseCode = "200", description = "List of bosses returned successfully")
     @GetMapping
-    public List<BossResponseDto> getAllBosses() {
-        return bossMapper.toResponseDtoList(bossService.getBosses());
+    public List<BossResponseDto> getAllBosses(
+            @Parameter(description = "Filter bosses by type", example = "MONSTER")
+            @RequestParam(required = false) MobType type)
+    {
+        return bossMapper.toResponseDtoList(bossService.getBosses(type));
     }
 
+    @Operation(summary = "Returns boss by {id}")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Boss found successfully"),
+            @ApiResponse(responseCode = "404", description = "Boss not found", content = @Content)
+    })
     @GetMapping("/{id}")
-    public BossDetailsDto getBossById(@PathVariable("id") String bossId) {
+    public BossDetailsDto getBossById(
+            @Parameter(description = "Boss id", required = true)
+            @PathVariable("id") String bossId)
+    {
         return bossMapper.toDetailsDto(bossService.getBossById(bossId));
     }
 
