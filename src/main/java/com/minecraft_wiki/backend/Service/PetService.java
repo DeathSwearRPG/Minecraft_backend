@@ -17,7 +17,10 @@ public class PetService {
 
     private final PetMongoRepository petMongoRepository;
 
-    public List<Pet> getPets() {
+    public List<Pet> getPets(MobStrength strength) {
+        if (strength != null) {
+            return petMongoRepository.findByTypeAndStrength(MobType.PET, strength);
+        }
         return petMongoRepository.findByType(MobType.PET);
     }
 
@@ -26,9 +29,9 @@ public class PetService {
             ObjectId objectId = new ObjectId(petId);
 
             return petMongoRepository.findByMobIdAndType(objectId, MobType.PET)
-                    .orElseThrow(() -> new RuntimeException("boss doesn't exist " + petId));
+                    .orElseThrow(() -> new RuntimeException("pet doesn't exist " + petId));
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Invalid boss id format: " + petId);
+            throw new RuntimeException("Invalid pet id format: " + petId);
         }
     }
 }
