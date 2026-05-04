@@ -6,9 +6,9 @@ import com.minecraft_wiki.backend.Model.enums.MobType;
 import com.minecraft_wiki.backend.Repo.BossMongoRepository;
 import lombok.AllArgsConstructor;
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -16,11 +16,11 @@ public class BossService {
 
     private final BossMongoRepository bossMongoRepository;
 
-    public List<Boss> getBosses(MobType type) {
+    public Page<Boss> getBosses(MobType type, Pageable pageable) {
         if (type != null) {
-            return bossMongoRepository.findByStrengthAndType(MobStrength.BOSS, type);
+            return bossMongoRepository.findByStrengthAndType(MobStrength.BOSS, type, pageable);
         }
-        return bossMongoRepository.findByStrength(MobStrength.BOSS);
+        return bossMongoRepository.findByStrength(MobStrength.BOSS, pageable);
     }
 
     public Boss getBossById(String bossId) {

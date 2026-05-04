@@ -5,8 +5,6 @@ import com.minecraft_wiki.backend.DTO.ItemResponseDto;
 import com.minecraft_wiki.backend.Model.Item;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class ItemMapper {
     public ItemResponseDto toResponseDto(Item item) {
@@ -36,15 +34,5 @@ public class ItemMapper {
                 .itemStats(item.getItemStats())
                 .craftRecipe(item.getCraftRecipe())
                 .build();
-    }
-
-    public List<ItemResponseDto> toResponseDtoList(List<Item> items) {
-        if (items == null) {
-            return List.of();
-        }
-
-        return items.stream()
-                .map(this::toResponseDto)
-                .toList();
     }
 }

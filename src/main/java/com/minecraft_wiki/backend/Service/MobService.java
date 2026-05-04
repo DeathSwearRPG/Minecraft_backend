@@ -6,8 +6,9 @@ import com.minecraft_wiki.backend.Model.enums.MobType;
 import com.minecraft_wiki.backend.Repo.MobMongoRepository;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -15,20 +16,20 @@ public class MobService {
 
     private final MobMongoRepository mobMongoRepository;
 
-    public List<Mob> getMobs(MobStrength strength, MobType type) {
+    public Page<Mob> getMobs(MobStrength strength, MobType type, Pageable pageable) {
         if (strength != null && type != null) {
-            return mobMongoRepository.findByStrengthAndType(strength,type);
+            return mobMongoRepository.findByStrengthAndType(strength, type, pageable);
         }
 
         if (strength != null) {
-            return mobMongoRepository.findByStrength(strength);
+            return mobMongoRepository.findByStrength(strength, pageable);
         }
 
         if (type != null) {
-            return mobMongoRepository.findByType(type);
+            return mobMongoRepository.findByType(type, pageable);
         }
 
-        return mobMongoRepository.findAll();
+        return mobMongoRepository.findAll(pageable);
     }
 
     public Mob getMobById(String mobId) {

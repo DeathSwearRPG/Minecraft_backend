@@ -5,8 +5,6 @@ import com.minecraft_wiki.backend.DTO.PetResponseDto;
 import com.minecraft_wiki.backend.Model.Pet;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class PetMapper {
     public PetResponseDto toResponseDto(Pet pet) {
@@ -37,14 +35,5 @@ public class PetMapper {
                 .strength(pet.getStrength())
                 .type(pet.getType())
                 .build();
-    }
-
-    public List<PetResponseDto> toResponseDtoList(List<Pet> pets) {
-        if (pets == null) {
-            return List.of();
-        }
-        return pets.stream()
-                .map(this::toResponseDto)
-                .toList();
     }
 }

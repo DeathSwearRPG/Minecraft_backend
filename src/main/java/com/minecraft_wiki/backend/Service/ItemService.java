@@ -7,6 +7,8 @@ import com.minecraft_wiki.backend.Model.enums.SpecialCharacteristic;
 import com.minecraft_wiki.backend.Repo.ItemMongoRepository;
 import lombok.AllArgsConstructor;
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,24 +19,24 @@ public class ItemService {
 
     private final ItemMongoRepository itemMongoRepository;
 
-    public List<Item> getItems(ItemRarity rarity, ItemType type, SpecialCharacteristic characteristic) {
+    public Page<Item> getItems(ItemRarity rarity, ItemType type, SpecialCharacteristic characteristic, Pageable pageable) {
         if (rarity != null && type != null && characteristic != null) {
-            return itemMongoRepository.findByItemRarityAndItemTypeAndSpecialCharacteristic(rarity, type, characteristic);
+            return itemMongoRepository.findByItemRarityAndItemTypeAndSpecialCharacteristic(rarity, type, characteristic, pageable);
         }
 
         if (rarity != null) {
-            return itemMongoRepository.findByItemRarity(rarity);
+            return itemMongoRepository.findByItemRarity(rarity, pageable);
         }
 
         if (type != null) {
-            return itemMongoRepository.findByItemType(type);
+            return itemMongoRepository.findByItemType(type, pageable);
         }
 
         if (characteristic != null) {
-            return itemMongoRepository.findBySpecialCharacteristic(characteristic);
+            return itemMongoRepository.findBySpecialCharacteristic(characteristic, pageable);
         }
 
-        return itemMongoRepository.findAll();
+        return itemMongoRepository.findAll(pageable);
     }
 
     public Item getItemById(String itemId) {

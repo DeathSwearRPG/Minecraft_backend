@@ -14,9 +14,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/items")
@@ -31,15 +33,18 @@ public class ItemController {
     @Operation(summary = "Returns list of all items")
     @ApiResponse(responseCode = "200", description = "List of items returned successfully")
     @GetMapping
-    public List<ItemResponseDto> getAllItems(
+    public Page<ItemResponseDto> getAllItems(
             @Parameter(description = "Filter items by rarity", example = "COMMON")
             @RequestParam(required = false) ItemRarity rarity,
             @Parameter(description = "Filter items by type", example = "MATERIAL")
             @RequestParam(required = false) ItemType type,
             @Parameter(description = "Filter items by characteristic", example = "SCALABLE")
-            @RequestParam(required = false) SpecialCharacteristic characteristic)
+            @RequestParam(required = false) SpecialCharacteristic characteristic,
+            @PageableDefault(size = 20, page = 0)
+            @ParameterObject Pageable pageable)
     {
-        return itemMapper.toResponseDtoList(itemService.getItems(rarity, type, characteristic));
+        return itemService.getItems(rarity, type, characteristic, pageable)
+                .map(itemMapper::toResponseDto);
     }
 
     @Operation(summary = "Returns item by {id}")

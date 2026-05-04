@@ -11,12 +11,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/classes")
@@ -31,8 +33,12 @@ public class GameClassController {
     @Operation(summary = "Returns list of all game classes")
     @ApiResponse(responseCode = "200", description = "List of game classes returned successfully")
     @GetMapping
-    public List<GameClassResponseDto> getClasses() {
-        return gameClassMapper.toResponseDtoList(gameClassService.getGameClasses());
+    public Page<GameClassResponseDto> getClasses(
+            @PageableDefault(size = 20, page = 0)
+            @ParameterObject Pageable pageable)
+    {
+        return gameClassService.getGameClasses(pageable)
+                .map(gameClassMapper::toResponseDto);
     }
 
     @Operation(summary = "Returns game class by {id}")

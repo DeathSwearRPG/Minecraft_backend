@@ -4,9 +4,9 @@ import com.minecraft_wiki.backend.Model.GameClass;
 import com.minecraft_wiki.backend.Repo.GameClassMongoRepository;
 import lombok.AllArgsConstructor;
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -14,8 +14,8 @@ public class GameClassService {
 
     private final GameClassMongoRepository gameClassMongoRepository;
 
-    public List<GameClass> getGameClasses() {
-        return gameClassMongoRepository.findAll();
+    public Page<GameClass> getGameClasses(Pageable pageable) {
+        return gameClassMongoRepository.findAll(pageable);
     }
 
     public GameClass getGameClassById(String classId) {
@@ -23,10 +23,10 @@ public class GameClassService {
             ObjectId objectId = new ObjectId(classId);
 
             return gameClassMongoRepository.findById(objectId)
-                    .orElseThrow(() -> new RuntimeException("boss doesn't exist " + classId));
+                    .orElseThrow(() -> new RuntimeException("game class doesn't exist " + classId));
 
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Invalid boss id format: " + classId);
+            throw new RuntimeException("Invalid game class id format: " + classId);
         }
     }
 }
