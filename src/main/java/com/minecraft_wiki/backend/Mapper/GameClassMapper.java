@@ -2,11 +2,8 @@ package com.minecraft_wiki.backend.Mapper;
 
 import com.minecraft_wiki.backend.DTO.GameClassDetailsDto;
 import com.minecraft_wiki.backend.DTO.GameClassResponseDto;
-import com.minecraft_wiki.backend.Model.ClassSkill;
 import com.minecraft_wiki.backend.Model.GameClass;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class GameClassMapper {
@@ -34,15 +31,5 @@ public class GameClassMapper {
                 .imageUrl(gameClass.getImageUrl())
                 .skills(gameClass.getSkills())
                 .build();
-    }
-
-    public List<GameClassResponseDto> toResponseDtoList(List<GameClass> classes) {
-        if (classes == null) {
-            return List.of();
-        }
-
-        return classes.stream()
-                .map(this::toResponseDto)
-                .toList();
     }
 }

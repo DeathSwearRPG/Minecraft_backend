@@ -13,8 +13,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/mobs")
@@ -29,13 +32,16 @@ public class MobController {
     @Operation(summary = "Returns list of all mobs")
     @ApiResponse(responseCode = "200", description = "List of mobs returned successfully")
     @GetMapping
-    public List<MobResponseDto> getAllMobs(
+    public Page<MobResponseDto> getAllMobs(
             @Parameter(description = "Filter mobs by strength", example = "NORMAL")
             @RequestParam(required = false) MobStrength strength,
             @Parameter(description = "Filter mobs by type", example = "MONSTER")
-            @RequestParam(required = false) MobType type)
+            @RequestParam(required = false) MobType type,
+            @PageableDefault(size = 20, page = 0)
+            @ParameterObject Pageable pageable)
     {
-        return mobMapper.toResponseDtoList(mobService.getMobs(strength,type));
+        return mobService.getMobs(strength, type, pageable)
+                .map(mobMapper::toResponseDto);
     }
 
     @Operation(summary = "Returns mob by {id}")

@@ -6,8 +6,6 @@ import com.minecraft_wiki.backend.DTO.BossResponseDto;
 import com.minecraft_wiki.backend.Model.Boss;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class BossMapper {
     public BossResponseDto toResponseDto(Boss boss) {
@@ -40,16 +38,5 @@ public class BossMapper {
                 .type(boss.getType())
                 .build();
      }
-
-    public List<BossResponseDto> toResponseDtoList(List<Boss> bosses) {
-        if (bosses == null) {
-            return List.of();
-        }
-
-        return bosses.stream()
-                .map(this::toResponseDto)
-                .toList();
-
-    }
 
 }

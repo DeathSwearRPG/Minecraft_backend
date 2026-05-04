@@ -5,13 +5,13 @@ import com.minecraft_wiki.backend.Model.enums.ItemRarity;
 import com.minecraft_wiki.backend.Model.enums.ItemType;
 import com.minecraft_wiki.backend.Model.enums.SpecialCharacteristic;
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.List;
-
 public interface ItemMongoRepository extends MongoRepository<Item, ObjectId> {
-    List<Item> findByItemRarity(ItemRarity rarity);
-    List<Item> findByItemType(ItemType type);
-    List<Item> findBySpecialCharacteristic(SpecialCharacteristic characteristic);
-    List<Item> findByItemRarityAndItemTypeAndSpecialCharacteristic(ItemRarity rarity, ItemType type, SpecialCharacteristic characteristic);
+    Page<Item> findByItemRarity(ItemRarity rarity, Pageable pageable);
+    Page<Item> findByItemType(ItemType type, Pageable pageable);
+    Page<Item> findBySpecialCharacteristic(SpecialCharacteristic characteristic, Pageable pageable);
+    Page<Item> findByItemRarityAndItemTypeAndSpecialCharacteristic(ItemRarity rarity, ItemType type, SpecialCharacteristic characteristic, Pageable pageable);
 }

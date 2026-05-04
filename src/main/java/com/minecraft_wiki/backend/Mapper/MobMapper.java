@@ -5,8 +5,6 @@ import com.minecraft_wiki.backend.DTO.MobResponseDto;
 import com.minecraft_wiki.backend.Model.Mob;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class MobMapper {
     public MobResponseDto toResponseDto(Mob mob) {
@@ -38,15 +36,5 @@ public class MobMapper {
                 .strength(mob.getStrength())
                 .type(mob.getType())
                 .build();
-    }
-
-    public List<MobResponseDto> toResponseDtoList(List<Mob> mobs) {
-        if (mobs == null) {
-            return List.of();
-        }
-
-        return mobs.stream()
-                .map(this::toResponseDto)
-                .toList();
     }
 }

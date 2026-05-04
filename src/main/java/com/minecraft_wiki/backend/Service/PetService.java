@@ -6,9 +6,9 @@ import com.minecraft_wiki.backend.Model.enums.MobType;
 import com.minecraft_wiki.backend.Repo.PetMongoRepository;
 import lombok.AllArgsConstructor;
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -17,11 +17,11 @@ public class PetService {
 
     private final PetMongoRepository petMongoRepository;
 
-    public List<Pet> getPets(MobStrength strength) {
+    public Page<Pet> getPets(MobStrength strength, Pageable pageable) {
         if (strength != null) {
-            return petMongoRepository.findByTypeAndStrength(MobType.PET, strength);
+            return petMongoRepository.findByTypeAndStrength(MobType.PET, strength, pageable);
         }
-        return petMongoRepository.findByType(MobType.PET);
+        return petMongoRepository.findByType(MobType.PET, pageable);
     }
 
     public Pet getPetById(String petId) {
