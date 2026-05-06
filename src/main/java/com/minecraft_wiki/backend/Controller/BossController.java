@@ -19,7 +19,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/bosses")
+@RequestMapping("/api/wiki/bosses")
 @RequiredArgsConstructor
 @Tag(name = "Bosses", description = "Operations related to bosses")
 
