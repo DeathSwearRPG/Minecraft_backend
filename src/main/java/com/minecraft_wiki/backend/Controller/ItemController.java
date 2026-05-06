@@ -21,7 +21,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/items")
+@RequestMapping("/api/wiki/items")
 @RequiredArgsConstructor
 @Tag(name = "Items", description = "Operations related to items")
 
@@ -32,7 +32,7 @@ public class ItemController {
 
     @Operation(summary = "Returns list of all items")
     @ApiResponse(responseCode = "200", description = "List of items returned successfully")
-    @GetMapping
+    @GetMapping()
     public Page<ItemResponseDto> getAllItems(
             @Parameter(description = "Filter items by rarity", example = "COMMON")
             @RequestParam(required = false) ItemRarity rarity,

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/classes")
+@RequestMapping("/api/wiki/classes")
 @RequiredArgsConstructor
 @Tag(name = "GameClasses", description = "Operations related to game classes")
 

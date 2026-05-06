@@ -20,7 +20,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/mobs")
+@RequestMapping("/api/wiki/mobs")
 @RequiredArgsConstructor
 @Tag(name = "Mobs", description = "Operations related to mobs")
 
