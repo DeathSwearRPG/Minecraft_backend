@@ -34,16 +34,17 @@ public class ItemController {
     @ApiResponse(responseCode = "200", description = "List of items returned successfully")
     @GetMapping()
     public Page<ItemResponseDto> getAllItems(
+            @RequestParam(required = false) String search,
             @Parameter(description = "Filter items by rarity", example = "COMMON")
             @RequestParam(required = false) ItemRarity rarity,
             @Parameter(description = "Filter items by type", example = "MATERIAL")
             @RequestParam(required = false) ItemType type,
             @Parameter(description = "Filter items by characteristic", example = "SCALABLE")
-            @RequestParam(required = false) SpecialCharacteristic characteristic,
+            @RequestParam(required = false) SpecialCharacteristic specialCharacteristic,
             @PageableDefault(size = 20, page = 0)
             @ParameterObject Pageable pageable)
     {
-        return itemService.getItems(rarity, type, characteristic, pageable)
+        return itemService.getItems(search, type, rarity, specialCharacteristic, pageable)
                 .map(itemMapper::toResponseDto);
     }
 

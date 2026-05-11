@@ -33,6 +33,7 @@ public class MobController {
     @ApiResponse(responseCode = "200", description = "List of mobs returned successfully")
     @GetMapping
     public Page<MobResponseDto> getAllMobs(
+            @RequestParam(required = false) String search,
             @Parameter(description = "Filter mobs by strength", example = "NORMAL")
             @RequestParam(required = false) MobStrength strength,
             @Parameter(description = "Filter mobs by type", example = "MONSTER")
@@ -40,7 +41,7 @@ public class MobController {
             @PageableDefault(size = 20, page = 0)
             @ParameterObject Pageable pageable)
     {
-        return mobService.getMobs(strength, type, pageable)
+        return mobService.getMobs(search, strength, type, pageable)
                 .map(mobMapper::toResponseDto);
     }
 

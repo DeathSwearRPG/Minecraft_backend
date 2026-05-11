@@ -32,12 +32,13 @@ public class PetController {
     @ApiResponse(responseCode = "200", description = "List of pets returned successfully")
     @GetMapping
     public Page<PetResponseDto> getAllPets(
+            @RequestParam(required = false) String search,
             @Parameter(description = "Filter pets by strength", example = "WEAK")
             @RequestParam(required = false) MobStrength strength,
             @PageableDefault(size = 20, page = 0)
             @ParameterObject Pageable pageable)
     {
-        return petService.getPets(strength, pageable)
+        return petService.getPets(search, strength, pageable)
                 .map(petMapper::toResponseDto);
     }
 
