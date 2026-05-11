@@ -16,11 +16,8 @@ public class BossService {
 
     private final BossMongoRepository bossMongoRepository;
 
-    public Page<Boss> getBosses(MobType type, Pageable pageable) {
-        if (type != null) {
-            return bossMongoRepository.findByStrengthAndType(MobStrength.BOSS, type, pageable);
-        }
-        return bossMongoRepository.findByStrength(MobStrength.BOSS, pageable);
+    public Page<Boss> getBosses(String search, MobType type, Pageable pageable) {
+        return bossMongoRepository.findBosses(search, type, pageable);
     }
 
     public Boss getBossById(String bossId) {

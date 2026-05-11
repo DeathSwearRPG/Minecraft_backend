@@ -19,24 +19,8 @@ public class ItemService {
 
     private final ItemMongoRepository itemMongoRepository;
 
-    public Page<Item> getItems(ItemRarity rarity, ItemType type, SpecialCharacteristic characteristic, Pageable pageable) {
-        if (rarity != null && type != null && characteristic != null) {
-            return itemMongoRepository.findByItemRarityAndItemTypeAndSpecialCharacteristic(rarity, type, characteristic, pageable);
-        }
-
-        if (rarity != null) {
-            return itemMongoRepository.findByItemRarity(rarity, pageable);
-        }
-
-        if (type != null) {
-            return itemMongoRepository.findByItemType(type, pageable);
-        }
-
-        if (characteristic != null) {
-            return itemMongoRepository.findBySpecialCharacteristic(characteristic, pageable);
-        }
-
-        return itemMongoRepository.findAll(pageable);
+    public Page<Item> getItems(String search, ItemType type, ItemRarity rarity, SpecialCharacteristic characteristic, Pageable pageable) {
+        return itemMongoRepository.getItems(search, type, rarity, characteristic, pageable);
     }
 
     public Item getItemById(String itemId) {

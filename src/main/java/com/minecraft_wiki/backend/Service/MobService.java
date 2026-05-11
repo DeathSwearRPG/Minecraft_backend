@@ -16,20 +16,8 @@ public class MobService {
 
     private final MobMongoRepository mobMongoRepository;
 
-    public Page<Mob> getMobs(MobStrength strength, MobType type, Pageable pageable) {
-        if (strength != null && type != null) {
-            return mobMongoRepository.findByStrengthAndType(strength, type, pageable);
-        }
-
-        if (strength != null) {
-            return mobMongoRepository.findByStrength(strength, pageable);
-        }
-
-        if (type != null) {
-            return mobMongoRepository.findByType(type, pageable);
-        }
-
-        return mobMongoRepository.findAll(pageable);
+    public Page<Mob> getMobs(String search, MobStrength strength, MobType type, Pageable pageable) {
+        return mobMongoRepository.findMobs(search, strength, type, pageable);
     }
 
     public Mob getMobById(String mobId) {

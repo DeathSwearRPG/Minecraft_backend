@@ -32,12 +32,13 @@ public class BossController {
     @ApiResponse(responseCode = "200", description = "List of bosses returned successfully")
     @GetMapping
     public Page<BossResponseDto> getAllBosses(
+            @RequestParam(required = false) String search,
             @Parameter(description = "Filter bosses by type", example = "MONSTER")
             @RequestParam(required = false) MobType type,
             @PageableDefault(size = 20, page = 0)
             @ParameterObject Pageable pageable)
     {
-        return bossService.getBosses(type, pageable)
+        return bossService.getBosses(search, type, pageable)
                 .map(bossMapper::toResponseDto);
     }
 

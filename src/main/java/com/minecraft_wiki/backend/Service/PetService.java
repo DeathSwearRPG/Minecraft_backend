@@ -17,11 +17,8 @@ public class PetService {
 
     private final PetMongoRepository petMongoRepository;
 
-    public Page<Pet> getPets(MobStrength strength, Pageable pageable) {
-        if (strength != null) {
-            return petMongoRepository.findByTypeAndStrength(MobType.PET, strength, pageable);
-        }
-        return petMongoRepository.findByType(MobType.PET, pageable);
+    public Page<Pet> getPets(String search, MobStrength strength, Pageable pageable) {
+        return petMongoRepository.findPets(search, strength, pageable);
     }
 
     public Pet getPetById(String petId) {
