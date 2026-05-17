@@ -22,3 +22,10 @@ minecraftServer:
     host: 127.0.0.1
     port: 25575
     password: test_password
+
+s3:
+  endpoint: http://localhost:9000
+  region: us-east-1
+  bucket: minecraft-wiki-images
+  access-key: admin
+  secret-key: adminadmin

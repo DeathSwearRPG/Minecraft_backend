@@ -22,7 +22,7 @@ public class V001SeedMobsChangeUnit {
         insertIfNotExists(
                 "Zombie",
                 "Обычный медленный зомби",
-                "https://example.com/zombie.png",
+                "http://localhost:9000/minecraft-wiki-images/mobs/43b354b8-c32b-4e8e-8bf6-3ba64ec68a2b-Zomby.jpeg",
                 "Ночь, равнины",
                 new MobStatsDocument(4, 1, 20, 2, 0),
                 List.of("Боится солнца", "Медленно передвигается"),
