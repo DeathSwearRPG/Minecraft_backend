@@ -2,16 +2,14 @@ package com.minecraft_wiki.backend.Model;
 
 import com.minecraft_wiki.backend.Model.enums.MobStrength;
 import com.minecraft_wiki.backend.Model.enums.MobType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
 import java.util.List;
 
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder

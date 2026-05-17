@@ -1,5 +1,8 @@
 package com.minecraft_wiki.backend.Service;
 
+import com.minecraft_wiki.backend.DTO.MobCreateDto;
+import com.minecraft_wiki.backend.DTO.MobUpdateDto;
+import com.minecraft_wiki.backend.Mapper.MobMapper;
 import com.minecraft_wiki.backend.Model.Mob;
 import com.minecraft_wiki.backend.Model.enums.MobStrength;
 import com.minecraft_wiki.backend.Model.enums.MobType;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class MobService {
 
     private final MobMongoRepository mobMongoRepository;
+    private final MobMapper mobMapper;
 
     public Page<Mob> getMobs(String search, MobStrength strength, MobType type, Pageable pageable) {
         return mobMongoRepository.findMobs(search, strength, type, pageable);
@@ -30,6 +34,21 @@ public class MobService {
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid mob id format: " + mobId);
         }
+    }
+
+    public Mob createMob(MobCreateDto dto) {
+
+        Mob mob = mobMapper.fromCreateDto(dto);
+
+        return mobMongoRepository.save(mob);
+    }
+
+    public Mob updateMob(String id, MobUpdateDto dto) {
+        Mob mob = getMobById(id);
+
+        mobMapper.updateMobFromDto(dto, mob);
+
+        return mobMongoRepository.save(mob);
     }
 }
 
