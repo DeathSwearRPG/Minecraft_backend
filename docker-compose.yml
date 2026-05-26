@@ -1,6 +1,18 @@
 
 services:
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.1
+    container_name: minecraft_keycloak
+    command: start-dev
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: 147852
+    ports:
+      - "8081:8080"
+    networks:
+      - project_network
+
   minio:
     image: minio/minio:latest
     container_name: minecraft_minio
