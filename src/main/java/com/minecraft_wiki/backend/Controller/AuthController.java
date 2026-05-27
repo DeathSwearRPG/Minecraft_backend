@@ -63,7 +63,6 @@ public class AuthController {
 
         return Map.of(
                 "username", user.getPreferredUsername(),
-                "name", user.getFullName(),
                 "roles", roles
         );
     }
