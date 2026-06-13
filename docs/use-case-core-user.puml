@@ -1,0 +1,51 @@
+@startuml
+title UML-диаграмма прецедентов основных пользовательских сценариев
+
+' Диаграмма составлена в стиле Use Case: акторы, граница системы,
+' пользовательские цели и связи include/extend без технических деталей.
+
+left to right direction
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam ArrowColor #2F3A45
+skinparam ArrowThickness 1.2
+skinparam UsecaseBorderColor #2F3A45
+skinparam UsecaseBackgroundColor #FFFFFF
+skinparam RectangleBorderColor #9AA7B8
+skinparam RectangleBackgroundColor #FAFCFF
+
+actor "Гость" as Guest
+actor "Пользователь" as User
+actor "Keycloak" as Keycloak
+
+Guest <|-- User
+
+rectangle "Minecraft Wiki" {
+  usecase "Просмотреть\nглавную страницу" as UC_Home
+  usecase "Просмотреть\nwiki-раздел" as UC_Wiki
+  usecase "Просмотреть\nличный кабинет" as UC_Profile
+  usecase "Просмотреть\nсвою статистику" as UC_Stats
+  usecase "Авторизоваться" as UC_Login
+  usecase "Заполнить\nMinecraft-ник" as UC_Nickname
+}
+
+Guest --> UC_Home
+Guest --> UC_Wiki
+Guest --> UC_Login
+
+User --> UC_Home
+User --> UC_Wiki
+User --> UC_Profile
+
+Keycloak --> UC_Login
+
+UC_Profile ..> UC_Login : <<include>>
+UC_Profile ..> UC_Stats : <<include>>
+UC_Profile ..> UC_Nickname : <<extend>>
+
+@enduml

@@ -43,8 +43,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/wiki/**").permitAll()
+                        .requestMatchers("/api/shop/yookassa/webhook").permitAll()
                         .requestMatchers("/api/auth/me").authenticated()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/profile/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/shop/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2

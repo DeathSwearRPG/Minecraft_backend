@@ -1,0 +1,85 @@
+flowchart TB
+    frontend["Frontend<br/>HTTP REST"]
+
+    subgraph backend["Spring Boot Backend"]
+        security["SecurityConfig<br/>OAuth2 Login<br/>roles USER / ADMIN<br/>CORS"]
+
+        subgraph api["API layer"]
+            wikiApi["Wiki / Home API<br/>/api/wiki/items<br/>/mobs /bosses /pets /classes<br/>/api/home/slides"]
+            authApi["Auth + Profile API<br/>/api/auth/**<br/>/api/profile/**"]
+            shopApi["Shop API<br/>/api/shop/**<br/>/yookassa/webhook"]
+            adminApi["Admin API<br/>/api/admin/**<br/>/api/admin/mobs"]
+        end
+
+        subgraph services["Service layer"]
+            wikiServices["Wiki Services<br/>ItemService, MobService<br/>BossService, PetService<br/>GameClassService, HomeSlideService"]
+            currentUserService["CurrentUserService<br/>профиль из OIDC user<br/>minecraftNickname"]
+            shopService["ShopService<br/>создание платежа<br/>обработка webhook<br/>выдача покупки через RCON"]
+            adminServices["Admin Services<br/>MobService create/update<br/>S3Service upload<br/>MinecraftRconService"]
+        end
+
+        dto["DTO / Mapper layer<br/>ResponseDto, DetailsDto, CreateDto, UpdateDto<br/>отделяют API-контракт от моделей и сущностей"]
+
+        subgraph persistence["Persistence / Infra layer"]
+            mongoRepo["Mongo Repositories<br/>MongoRepository<br/>custom MongoTemplate queries"]
+            userRepo["JPA Repository<br/>UserProfileRepository"]
+            shopRepo["JPA Repositories<br/>ProductRepository<br/>PurchaseRepository"]
+            infraClients["Infra Clients<br/>S3 client<br/>RCON client"]
+        end
+    end
+
+    mongo[("MongoDB<br/>wiki-контент<br/>items, mobs, slides")]
+    postgres[("PostgreSQL<br/>profiles, products<br/>purchases")]
+    migrations["Migrations / seed<br/>Mongock для MongoDB<br/>Flyway для PostgreSQL"]
+
+    keycloak["Keycloak<br/>OIDC, роли"]
+    yookassa["YooKassa<br/>создание платежа<br/>webhook"]
+    minecraft["Minecraft Server<br/>RCON-команды"]
+    minio["MinIO / S3<br/>хранилище изображений"]
+
+    frontend --> api
+    keycloak --> security
+    security --> api
+
+    wikiApi --> wikiServices
+    authApi --> currentUserService
+    shopApi --> shopService
+    adminApi --> adminServices
+
+    wikiServices --> dto
+    currentUserService --> dto
+    shopService --> dto
+    adminServices --> dto
+
+    dto --> mongoRepo
+    dto --> userRepo
+    dto --> shopRepo
+    dto --> infraClients
+
+    mongoRepo --> mongo
+    userRepo --> postgres
+    shopRepo --> postgres
+    migrations -.-> mongo
+    migrations -.-> postgres
+
+    shopService --> yookassa
+    yookassa --> shopApi
+    shopService --> minecraft
+    infraClients --> minecraft
+    infraClients --> minio
+
+    classDef wiki fill:#eef6ff,stroke:#6fa8dc,color:#1f2933
+    classDef auth fill:#f7efff,stroke:#a987d6,color:#1f2933
+    classDef shop fill:#effaf1,stroke:#72b87b,color:#1f2933
+    classDef admin fill:#fff7e7,stroke:#d7a64b,color:#1f2933
+    classDef shared fill:#f6f8fb,stroke:#a8b2bf,color:#1f2933
+    classDef external fill:#fff2f2,stroke:#cf6b6b,color:#1f2933
+    classDef database fill:#eef4ff,stroke:#6384c4,color:#1f2933
+
+    class wikiApi,wikiServices,mongoRepo wiki
+    class authApi,currentUserService,userRepo auth
+    class shopApi,shopService,shopRepo shop
+    class adminApi,adminServices,infraClients admin
+    class dto,security,frontend,migrations shared
+    class keycloak,yookassa,minecraft,minio external
+    class mongo,postgres database

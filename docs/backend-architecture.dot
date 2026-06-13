@@ -1,0 +1,291 @@
+digraph BackendArchitecture {
+  graph [
+    rankdir=TB,
+    bgcolor="#ffffff",
+    pad="0.35",
+    nodesep="0.46",
+    ranksep="0.62",
+    splines=ortho,
+    fontname="Arial",
+    fontsize=18,
+    label="Компонентная архитектура backend-приложения Minecraft Wiki",
+    labelloc=t
+  ];
+
+  node [
+    shape=box,
+    style="rounded,filled",
+    fontname="Arial",
+    fontsize=12,
+    margin="0.12,0.08",
+    penwidth=1.2,
+    color="#2f3a45",
+    fillcolor="#ffffff"
+  ];
+
+  edge [
+    fontname="Arial",
+    fontsize=10,
+    color="#55616f",
+    arrowsize=0.7,
+    penwidth=1.2
+  ];
+
+  frontend [
+    label="Frontend / клиент",
+    fillcolor="#e8f1ff",
+    color="#4d74b8"
+  ];
+
+  subgraph cluster_backend {
+    label="Spring Boot Backend";
+    color="#9aa7b8";
+    penwidth=1.6;
+    style="rounded";
+    fontname="Arial";
+    fontsize=16;
+
+    subgraph cluster_api {
+      label="REST API layer";
+      color="#bad3f5";
+      style="rounded,filled";
+      fillcolor="#f3f8ff";
+
+      wiki_api [
+        label="Wiki API\n/api/wiki/items\n/api/wiki/mobs\n/api/wiki/bosses\n/api/wiki/pets\n/api/wiki/classes",
+        fillcolor="#dcecff",
+        color="#6094d7"
+      ];
+      home_api [
+        label="Home API\n/api/home/slides",
+        fillcolor="#dcecff",
+        color="#6094d7"
+      ];
+      auth_api [
+        label="Auth + Profile API\n/api/auth/**\n/api/profile/**",
+        fillcolor="#dcecff",
+        color="#6094d7"
+      ];
+      shop_api [
+        label="Shop + Payment API\n/api/shop/**\n/api/shop/yookassa/webhook",
+        fillcolor="#dcecff",
+        color="#6094d7"
+      ];
+      admin_api [
+        label="Admin API\n/api/admin/**\n/api/admin/mobs",
+        fillcolor="#dcecff",
+        color="#6094d7"
+      ];
+    }
+
+    subgraph cluster_security {
+      label="Security";
+      color="#d8bddb";
+      style="rounded,filled";
+      fillcolor="#fbf4fc";
+
+      security [
+        label="SecurityConfig\nOAuth2 Login\nroles USER / ADMIN\nCORS",
+        fillcolor="#f1def4",
+        color="#a06fac"
+      ];
+    }
+
+    subgraph cluster_services {
+      label="Application / Service layer";
+      color="#bddfc8";
+      style="rounded,filled";
+      fillcolor="#f3fbf5";
+
+      wiki_services [
+        label="Wiki Services\nItemService\nMobService\nBossService\nPetService\nGameClassService\nHomeSlideService",
+        fillcolor="#def3e4",
+        color="#65a975"
+      ];
+      user_service [
+        label="CurrentUserService\nпрофиль из OIDC user",
+        fillcolor="#def3e4",
+        color="#65a975"
+      ];
+      shop_service [
+        label="ShopService\nсоздание платежа\nобработка webhook\nвыдача покупки",
+        fillcolor="#def3e4",
+        color="#65a975"
+      ];
+      rcon_service [
+        label="MinecraftRconService\nкоманды на сервер",
+        fillcolor="#def3e4",
+        color="#65a975"
+      ];
+      s3_service [
+        label="S3Service\nзагрузка изображений",
+        fillcolor="#def3e4",
+        color="#65a975"
+      ];
+    }
+
+    subgraph cluster_mapping {
+      label="DTO / Mapper layer";
+      color="#e8d19a";
+      style="rounded,filled";
+      fillcolor="#fffaf0";
+
+      dto_mapper [
+        label="DTO + Mappers\nResponseDto / DetailsDto\nCreateDto / UpdateDto",
+        fillcolor="#fff0c9",
+        color="#c49a3a"
+      ];
+    }
+
+    subgraph cluster_domain {
+      label="Domain model";
+      color="#f0c2a6";
+      style="rounded,filled";
+      fillcolor="#fff7f2";
+
+      mongo_model [
+        label="Mongo documents\nItem, Mob, Boss, Pet\nGameClass, HomeSlide",
+        fillcolor="#ffe4d3",
+        color="#d98752"
+      ];
+      jpa_model [
+        label="JPA entities\nUserProfile\nProduct\nPurchase",
+        fillcolor="#ffe4d3",
+        color="#d98752"
+      ];
+      enums [
+        label="Enums\nPurchaseStatus\nItemType, MobType\nItemRarity, etc.",
+        fillcolor="#ffe4d3",
+        color="#d98752"
+      ];
+    }
+
+    subgraph cluster_persistence {
+      label="Persistence layer";
+      color="#c9c2ef";
+      style="rounded,filled";
+      fillcolor="#f7f5ff";
+
+      mongo_repo [
+        label="Mongo repositories\nMongoRepository\ncustom MongoTemplate queries",
+        fillcolor="#e7e0ff",
+        color="#8372d2"
+      ];
+      jpa_repo [
+        label="JPA repositories\nProductRepository\nPurchaseRepository\nUserProfileRepository",
+        fillcolor="#e7e0ff",
+        color="#8372d2"
+      ];
+    }
+
+    subgraph cluster_migrations {
+      label="Migration / seed";
+      color="#c4ccd6";
+      style="rounded,filled";
+      fillcolor="#f6f7f9";
+
+      mongock [
+        label="Mongock\nseed wiki content",
+        fillcolor="#e9edf2",
+        color="#7d8a99"
+      ];
+      flyway [
+        label="Flyway\nPostgreSQL schema",
+        fillcolor="#e9edf2",
+        color="#7d8a99"
+      ];
+    }
+  }
+
+  subgraph cluster_data {
+    label="Databases";
+    color="#b9c1cc";
+    style="rounded,filled";
+    fillcolor="#f7f8fa";
+    mongodb [
+      label="MongoDB\nwiki content",
+      shape=cylinder,
+      fillcolor="#eef7ef",
+      color="#6fae77"
+    ];
+    postgres [
+      label="PostgreSQL\nprofiles, products, purchases",
+      shape=cylinder,
+      fillcolor="#eef4ff",
+      color="#6384c4"
+    ];
+  }
+
+  subgraph cluster_external {
+    label="External systems";
+    color="#e2b4b4";
+    style="rounded,filled";
+    fillcolor="#fff6f6";
+
+    keycloak [
+      label="Keycloak\nOIDC / roles",
+      fillcolor="#ffe1e1",
+      color="#cf6b6b"
+    ];
+    yookassa [
+      label="YooKassa\npayments API + webhook",
+      fillcolor="#ffe1e1",
+      color="#cf6b6b"
+    ];
+    minecraft [
+      label="Minecraft Server\nRCON",
+      fillcolor="#ffe1e1",
+      color="#cf6b6b"
+    ];
+    minio [
+      label="MinIO / S3\nimage storage",
+      fillcolor="#ffe1e1",
+      color="#cf6b6b"
+    ];
+  }
+
+  frontend -> wiki_api;
+  frontend -> home_api;
+  frontend -> auth_api;
+  frontend -> shop_api;
+  frontend -> admin_api;
+
+  security -> auth_api [label="protects"];
+  security -> shop_api [label="USER / ADMIN"];
+  security -> admin_api [label="ADMIN"];
+  keycloak -> security [label="OIDC"];
+
+  wiki_api -> wiki_services;
+  home_api -> wiki_services;
+  admin_api -> wiki_services [label="create / update mobs"];
+  auth_api -> user_service;
+  shop_api -> shop_service;
+  admin_api -> rcon_service;
+  admin_api -> s3_service;
+
+  wiki_api -> dto_mapper;
+  home_api -> dto_mapper;
+  admin_api -> dto_mapper;
+  dto_mapper -> mongo_model;
+  dto_mapper -> jpa_model;
+
+  wiki_services -> mongo_repo;
+  user_service -> jpa_repo;
+  shop_service -> jpa_repo;
+  shop_service -> user_service;
+  shop_service -> yookassa [label="create payment"];
+  yookassa -> shop_api [label="webhook"];
+  shop_service -> rcon_service [label="grant command"];
+  rcon_service -> minecraft;
+  s3_service -> minio;
+
+  mongo_repo -> mongo_model;
+  jpa_repo -> jpa_model;
+  mongo_model -> enums [style=dashed, arrowhead=none];
+  jpa_model -> enums [style=dashed, arrowhead=none];
+
+  mongo_repo -> mongodb;
+  jpa_repo -> postgres;
+  mongock -> mongodb;
+  flyway -> postgres;
+}

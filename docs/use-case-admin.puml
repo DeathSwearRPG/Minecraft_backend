@@ -1,0 +1,73 @@
+@startuml
+title UML-диаграмма прецедентов администратора
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam linetype ortho
+skinparam ArrowColor #2F3A45
+skinparam ArrowThickness 1.2
+skinparam UsecaseBorderColor #2F3A45
+skinparam UsecaseBackgroundColor #FFFFFF
+skinparam RectangleBorderColor #9AA7B8
+skinparam RectangleBackgroundColor #FAFCFF
+
+left to right direction
+
+actor "Администратор" as Admin
+actor "MinIO / S3" as Minio
+actor "Minecraft Server" as MinecraftServer
+
+rectangle "Minecraft Wiki" {
+  package "Управление wiki-контентом" {
+    usecase "Управлять\nwiki-контентом" as UC_ManageContent
+    usecase "Создать моба" as UC_CreateMob
+    usecase "Редактировать моба" as UC_UpdateMob
+    usecase "Заполнить данные\nмоба" as UC_FillMobData
+    usecase "Сохранить моба\nв wiki-контенте" as UC_SaveMob
+  }
+
+  package "Загрузка изображений" {
+    usecase "Загрузить\nизображение" as UC_UploadImage
+    usecase "Выбрать файл\nизображения" as UC_SelectFile
+    usecase "Сохранить изображение\nв хранилище" as UC_SaveImage
+  }
+
+  package "Выдача привилегии" {
+    usecase "Выдать\nпривилегию" as UC_GrantBonus
+    usecase "Указать никнейм\nигрока" as UC_SetNickname
+    usecase "Отправить команду\nна игровой сервер" as UC_SendCommand
+  }
+}
+
+Admin -- UC_ManageContent
+Admin -- UC_UploadImage
+Admin -- UC_GrantBonus
+
+Minio -- UC_SaveImage
+MinecraftServer -- UC_SendCommand
+
+UC_ManageContent .down.> UC_CreateMob : <<include>>
+UC_ManageContent .down.> UC_UpdateMob : <<include>>
+
+UC_CreateMob .right.> UC_FillMobData : <<include>>
+UC_UpdateMob .right.> UC_FillMobData : <<include>>
+UC_FillMobData .right.> UC_SaveMob : <<include>>
+
+UC_UploadImage .right.> UC_SelectFile : <<include>>
+UC_UploadImage .right.> UC_SaveImage : <<include>>
+
+UC_GrantBonus .right.> UC_SetNickname : <<include>>
+UC_GrantBonus .right.> UC_SendCommand : <<include>>
+
+UC_ManageContent -[hidden]down- UC_UploadImage
+UC_UploadImage -[hidden]down- UC_GrantBonus
+UC_ManageContent -[hidden]right- UC_CreateMob
+UC_CreateMob -[hidden]right- UC_FillMobData
+UC_UploadImage -[hidden]right- UC_SelectFile
+UC_GrantBonus -[hidden]right- UC_SetNickname
+
+@enduml

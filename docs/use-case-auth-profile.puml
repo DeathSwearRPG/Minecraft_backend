@@ -1,0 +1,60 @@
+@startuml
+title UML-диаграмма вариантов использования авторизации и профиля
+
+!pragma layout smetana
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam linetype ortho
+skinparam ArrowColor #2F3A45
+skinparam ArrowThickness 1.2
+skinparam UsecaseBorderColor #2F3A45
+skinparam UsecaseBackgroundColor #FFFFFF
+skinparam RectangleBorderColor #9AA7B8
+skinparam RectangleBackgroundColor #FAFCFF
+
+left to right direction
+
+actor "Гость" as Guest
+actor "Пользователь" as User
+actor "Keycloak\n<<external system>>" as Keycloak
+
+Guest <|-- User
+
+rectangle "Авторизация / профиль" {
+  usecase "Начать авторизацию" as UC_StartLogin
+  usecase "Авторизоваться\nчерез Keycloak" as UC_Login
+  usecase "Получить данные\nтекущего пользователя" as UC_CurrentUser
+  usecase "Редактировать\nMinecraft-ник" as UC_EditNickname
+  usecase "Выйти из системы" as UC_Logout
+
+  usecase "Отклонить запрос\nбез авторизации" as UC_Unauthorized
+  usecase "Отклонить некорректный\nMinecraft-ник" as UC_InvalidNickname
+}
+
+Guest -- UC_StartLogin
+User -- UC_CurrentUser
+User -- UC_EditNickname
+User -- UC_Logout
+Keycloak -- UC_Login
+Keycloak -- UC_Logout
+
+UC_StartLogin ..> UC_Login : <<include>>
+UC_EditNickname ..> UC_CurrentUser : <<include>>
+
+UC_Unauthorized ..> UC_CurrentUser : <<extend>>
+UC_Unauthorized ..> UC_EditNickname : <<extend>>
+UC_InvalidNickname ..> UC_EditNickname : <<extend>>
+
+legend right
+  <b>Обозначения</b>
+  -- участие актора в сценарии
+  ..> <<include>> обязательная часть сценария
+  ..> <<extend>> альтернативный или ошибочный сценарий
+endlegend
+
+@enduml

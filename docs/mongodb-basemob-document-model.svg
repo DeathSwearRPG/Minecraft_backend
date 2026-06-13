@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="980" viewBox="0 0 1500 980">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/>
+    </marker>
+    <style>
+      .title { font: 700 32px Arial, sans-serif; fill: #16202b; }
+      .subtitle { font: 400 17px Arial, sans-serif; fill: #52606d; }
+      .label { font: 700 17px Arial, sans-serif; fill: #243140; }
+      .small { font: 400 14px Arial, sans-serif; fill: #52606d; }
+      .boxTitle { font: 700 20px Arial, sans-serif; fill: #16202b; }
+      .boxSub { font: 400 14px Arial, sans-serif; fill: #52606d; }
+      .fieldHead { font: 700 15px Arial, sans-serif; fill: #26313d; }
+      .field { font: 15px Arial, sans-serif; fill: #16202b; }
+      .mono { font: 14px Menlo, Consolas, monospace; fill: #16202b; }
+      .line { stroke: #334155; stroke-width: 2.2; fill: none; marker-end: url(#arrow); }
+      .softLine { stroke: #64748b; stroke-width: 1.7; fill: none; marker-end: url(#arrow); }
+      .dashed { stroke-dasharray: 8 7; }
+      .card { fill: #ffffff; stroke: #334155; stroke-width: 2; rx: 12; }
+      .head { fill: #eef6ff; stroke: #334155; stroke-width: 2; }
+      .nestedHead { fill: #f2fbf3; stroke: #334155; stroke-width: 2; }
+      .arrayHead { fill: #fff7e8; stroke: #334155; stroke-width: 2; }
+      .enumHead { fill: #f6f0ff; stroke: #334155; stroke-width: 2; }
+      .grid { stroke: #d4dce7; stroke-width: 1; }
+      .note { fill: #f8fafc; stroke: #a8b2bf; stroke-width: 1.4; rx: 10; }
+    </style>
+  </defs>
+
+  <rect width="1500" height="980" fill="#ffffff"/>
+  <text x="750" y="58" text-anchor="middle" class="title">Документная модель коллекции MongoDB: mobs</text>
+  <text x="750" y="88" text-anchor="middle" class="subtitle">На основе модели BaseMob: общая структура документов для Mob, Boss и Pet</text>
+
+  <!-- Collection -->
+  <rect x="60" y="190" width="250" height="170" class="card"/>
+  <rect x="60" y="190" width="250" height="54" class="head"/>
+  <text x="185" y="224" text-anchor="middle" class="boxTitle">collection</text>
+  <text x="185" y="279" text-anchor="middle" class="boxTitle">mobs</text>
+  <text x="185" y="307" text-anchor="middle" class="boxSub">хранит документы</text>
+  <text x="185" y="329" text-anchor="middle" class="boxSub">Mob / Boss / Pet</text>
+
+  <!-- BaseMob document -->
+  <rect x="390" y="130" width="520" height="610" class="card"/>
+  <rect x="390" y="130" width="520" height="64" class="head"/>
+  <text x="650" y="158" text-anchor="middle" class="boxTitle">BaseMob document</text>
+  <text x="650" y="181" text-anchor="middle" class="boxSub">основной документ коллекции mobs</text>
+
+  <rect x="410" y="218" width="480" height="36" fill="#f7f8fa"/>
+  <line x1="560" y1="218" x2="560" y2="720" class="grid"/>
+  <line x1="720" y1="218" x2="720" y2="720" class="grid"/>
+  <text x="430" y="242" class="fieldHead">Поле</text>
+  <text x="580" y="242" class="fieldHead">Тип</text>
+  <text x="740" y="242" class="fieldHead">Назначение</text>
+
+  <g class="field">
+    <line x1="410" y1="254" x2="890" y2="254" class="grid"/>
+    <text x="430" y="280">_id / mobId</text><text x="580" y="280">ObjectId</text><text x="740" y="280">идентификатор</text>
+    <line x1="410" y1="296" x2="890" y2="296" class="grid"/>
+    <text x="430" y="322">name</text><text x="580" y="322">String</text><text x="740" y="322">название</text>
+    <line x1="410" y1="338" x2="890" y2="338" class="grid"/>
+    <text x="430" y="364">description</text><text x="580" y="364">String</text><text x="740" y="364">описание</text>
+    <line x1="410" y1="380" x2="890" y2="380" class="grid"/>
+    <text x="430" y="406">imageUrl</text><text x="580" y="406">String</text><text x="740" y="406">изображение</text>
+    <line x1="410" y1="422" x2="890" y2="422" class="grid"/>
+    <text x="430" y="448">locationInfo</text><text x="580" y="448">String</text><text x="740" y="448">место появления</text>
+    <line x1="410" y1="464" x2="890" y2="464" class="grid"/>
+    <text x="430" y="490">stats</text><text x="580" y="490">MobStats</text><text x="740" y="490">вложенный объект</text>
+    <line x1="410" y1="506" x2="890" y2="506" class="grid"/>
+    <text x="430" y="532">drops</text><text x="580" y="532">List&lt;DropItem&gt;</text><text x="740" y="532">массив объектов</text>
+    <line x1="410" y1="548" x2="890" y2="548" class="grid"/>
+    <text x="430" y="574">extraInfo</text><text x="580" y="574">List&lt;String&gt;</text><text x="740" y="574">доп. сведения</text>
+    <line x1="410" y1="590" x2="890" y2="590" class="grid"/>
+    <text x="430" y="616">strength</text><text x="580" y="616">MobStrength</text><text x="740" y="616">уровень силы</text>
+    <line x1="410" y1="632" x2="890" y2="632" class="grid"/>
+    <text x="430" y="658">type</text><text x="580" y="658">MobType</text><text x="740" y="658">тип существа</text>
+  </g>
+
+  <!-- Nested stats -->
+  <rect x="1010" y="160" width="390" height="250" class="card"/>
+  <rect x="1010" y="160" width="390" height="54" class="nestedHead"/>
+  <text x="1205" y="194" text-anchor="middle" class="boxTitle">MobStats</text>
+  <rect x="1030" y="235" width="350" height="34" fill="#f7f8fa"/>
+  <line x1="1205" y1="235" x2="1205" y2="390" class="grid"/>
+  <text x="1050" y="258" class="fieldHead">Поле</text>
+  <text x="1225" y="258" class="fieldHead">Тип</text>
+  <line x1="1030" y1="269" x2="1380" y2="269" class="grid"/>
+  <text x="1050" y="294" class="field">baseDamage</text><text x="1225" y="294" class="field">int</text>
+  <line x1="1030" y1="305" x2="1380" y2="305" class="grid"/>
+  <text x="1050" y="330" class="field">damagePerLevel</text><text x="1225" y="330" class="field">int</text>
+  <line x1="1030" y1="341" x2="1380" y2="341" class="grid"/>
+  <text x="1050" y="366" class="field">baseHealth</text><text x="1225" y="366" class="field">int</text>
+  <text x="1050" y="392" class="field">healthPerLevel, armor</text><text x="1225" y="392" class="field">int</text>
+
+  <!-- Nested drops -->
+  <rect x="1010" y="475" width="390" height="245" class="card"/>
+  <rect x="1010" y="475" width="390" height="54" class="arrayHead"/>
+  <text x="1205" y="509" text-anchor="middle" class="boxTitle">DropItem[]</text>
+  <text x="1205" y="548" text-anchor="middle" class="boxSub">опциональный массив вложенных документов</text>
+  <rect x="1030" y="575" width="350" height="34" fill="#f7f8fa"/>
+  <line x1="1205" y1="575" x2="1205" y2="700" class="grid"/>
+  <text x="1050" y="598" class="fieldHead">Поле</text>
+  <text x="1225" y="598" class="fieldHead">Тип</text>
+  <line x1="1030" y1="609" x2="1380" y2="609" class="grid"/>
+  <text x="1050" y="634" class="field">itemName</text><text x="1225" y="634" class="field">String</text>
+  <line x1="1030" y1="645" x2="1380" y2="645" class="grid"/>
+  <text x="1050" y="670" class="field">minCount, maxCount</text><text x="1225" y="670" class="field">int</text>
+  <line x1="1030" y1="681" x2="1380" y2="681" class="grid"/>
+  <text x="1050" y="706" class="field">chance</text><text x="1225" y="706" class="field">double</text>
+
+  <!-- Enums -->
+  <rect x="390" y="790" width="520" height="110" class="card"/>
+  <rect x="390" y="790" width="520" height="42" class="enumHead"/>
+  <text x="650" y="817" text-anchor="middle" class="boxTitle">Классификация документов</text>
+  <text x="420" y="855" class="field">strength: WEAK, NORMAL, ELITE, BOSS</text>
+  <text x="420" y="883" class="field">type: MONSTER, RESISTANCE, PET, SPIRIT, MINION</text>
+
+  <!-- Notes -->
+  <rect x="60" y="430" width="250" height="170" class="note"/>
+  <text x="185" y="464" text-anchor="middle" class="label">Особенность MongoDB</text>
+  <text x="185" y="497" text-anchor="middle" class="small">Вложенные объекты</text>
+  <text x="185" y="520" text-anchor="middle" class="small">хранятся внутри</text>
+  <text x="185" y="543" text-anchor="middle" class="small">одного документа,</text>
+  <text x="185" y="566" text-anchor="middle" class="small">без отдельных таблиц</text>
+
+  <path d="M 310 275 L 390 275" class="line"/>
+  <path d="M 890 490 L 1010 290" class="line"/>
+  <path d="M 890 532 L 1010 600" class="line"/>
+  <path d="M 650 740 L 650 790" class="softLine"/>
+  <path d="M 310 515 L 390 515" class="softLine dashed"/>
+</svg>
