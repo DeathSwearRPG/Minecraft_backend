@@ -1,0 +1,316 @@
+digraph BackendUmlComponents {
+  graph [
+    rankdir=TB,
+    newrank=true,
+    bgcolor="#ffffff",
+    pad="0.35",
+    nodesep="0.45",
+    ranksep="0.62",
+    splines=ortho,
+    outputorder=edgesfirst,
+    fontname="Arial",
+    fontsize=22,
+    label="UML-диаграмма компонентов backend-приложения Minecraft Wiki",
+    labelloc=t
+  ];
+
+  node [
+    shape=box,
+    style="rounded,filled",
+    fontname="Arial",
+    fontsize=12,
+    margin="0.12,0.08",
+    penwidth=1.25,
+    color="#2f3a45",
+    fillcolor="#ffffff"
+  ];
+
+  edge [
+    fontname="Arial",
+    fontsize=10,
+    color="#2f3a45",
+    arrowsize=0.65,
+    penwidth=1.15
+  ];
+
+  frontend [
+    label=<<B>Frontend</B><BR/><FONT POINT-SIZE="10">HTTP methods</FONT>>,
+    fillcolor="#eef4ff",
+    color="#7b91ad"
+  ];
+
+  keycloak [
+    label=<<B>Keycloak</B><BR/><FONT POINT-SIZE="10">OIDC, роли</FONT>>,
+    fillcolor="#fff0f0",
+    color="#d96b6b"
+  ];
+
+  yookassa [
+    label=<<B>YooKassa</B><BR/><FONT POINT-SIZE="10">платежи и webhook</FONT>>,
+    fillcolor="#fff0f0",
+    color="#d96b6b"
+  ];
+
+  minecraft [
+    label=<<B>Minecraft Server</B><BR/><FONT POINT-SIZE="10">RCON-команды</FONT>>,
+    fillcolor="#fff0f0",
+    color="#d96b6b"
+  ];
+
+  minio [
+    label=<<B>MinIO / S3</B><BR/><FONT POINT-SIZE="10">хранилище изображений</FONT>>,
+    fillcolor="#fff0f0",
+    color="#d96b6b"
+  ];
+
+  mongodb [
+    label=<<B>MongoDB</B><BR/><FONT POINT-SIZE="10">mobs, items,<BR/>gameClasses, homeSlides</FONT>>,
+    fillcolor="#edf8f0",
+    color="#68aa78"
+  ];
+
+  postgresql [
+    label=<<B>PostgreSQL</B><BR/><FONT POINT-SIZE="10">user_profiles,<BR/>products, purchases</FONT>>,
+    fillcolor="#eef4ff",
+    color="#668dd3"
+  ];
+
+  subgraph cluster_backend {
+    label="Spring Boot Backend";
+    color="#9aa7b8";
+    penwidth=1.7;
+    style="rounded";
+    fontname="Arial";
+    fontsize=18;
+    margin=22;
+
+    security [
+      label=<<B>SecurityConfig</B><BR/><FONT POINT-SIZE="10">&lt;&lt;configuration&gt;&gt;<BR/>OAuth2 Login, роли USER / ADMIN<BR/>CORS, правила доступа</FONT>>,
+      fillcolor="#f3f6fa",
+      color="#9aa7b8",
+      width=7.5,
+      height=0.9
+    ];
+
+    subgraph cluster_modules {
+      label="";
+      color="#ffffff";
+      style=invis;
+
+      subgraph cluster_wiki {
+        label="Wiki / Home";
+        color="#68a6e8";
+        fillcolor="#f2f8ff";
+        style="rounded,filled";
+        fontname="Arial";
+        fontsize=15;
+        margin=14;
+
+        wiki_controllers [
+          label=<<B>Wiki/Home controllers</B><BR/><FONT POINT-SIZE="10">&lt;&lt;controller&gt;&gt;<BR/>ItemController, MobController<BR/>BossController, PetController<BR/>GameClassController, InfoController</FONT>>,
+          fillcolor="#e6f2ff",
+          color="#68a6e8"
+        ];
+
+        wiki_mappers [
+          label=<<B>Wiki/Home DTO + mappers</B><BR/><FONT POINT-SIZE="10">&lt;&lt;mapper&gt;&gt;<BR/>ItemMapper, MobMapper<BR/>BossMapper, PetMapper<BR/>GameClassMapper, HomeSlideMapper</FONT>>,
+          fillcolor="#eef5ff",
+          color="#68a6e8"
+        ];
+
+        wiki_services [
+          label=<<B>Wiki/Home services</B><BR/><FONT POINT-SIZE="10">&lt;&lt;service&gt;&gt;<BR/>ItemService, MobService<BR/>BossService, PetService<BR/>GameClassService, HomeSlideService</FONT>>,
+          fillcolor="#eaf6ee",
+          color="#68aa78"
+        ];
+
+        mongo_repos [
+          label=<<B>Mongo repositories</B><BR/><FONT POINT-SIZE="10">&lt;&lt;repository&gt;&gt;<BR/>ItemMongoRepository, MobMongoRepository<BR/>BossMongoRepository, PetMongoRepository<BR/>GameClassMongoRepository, HomeSlideMongoRepository</FONT>>,
+          fillcolor="#f4f0ff",
+          color="#9278d8"
+        ];
+
+        mongo_custom [
+          label=<<B>Custom Mongo queries</B><BR/><FONT POINT-SIZE="10">&lt;&lt;repository impl&gt;&gt;<BR/>Item/Boss/Mob/Pet custom repositories<BR/>MongoTemplate</FONT>>,
+          fillcolor="#f4f0ff",
+          color="#9278d8"
+        ];
+      }
+
+      subgraph cluster_auth {
+        label="Auth / Profile";
+        color="#a978dc";
+        fillcolor="#f8f1ff";
+        style="rounded,filled";
+        fontname="Arial";
+        fontsize=15;
+        margin=14;
+
+        auth_controllers [
+          label=<<B>Auth + Profile controllers</B><BR/><FONT POINT-SIZE="10">&lt;&lt;controller&gt;&gt;<BR/>AuthController<BR/>ProfileController</FONT>>,
+          fillcolor="#f3e9ff",
+          color="#a978dc"
+        ];
+
+        auth_payload [
+          label=<<B>Auth/Profile payload</B><BR/><FONT POINT-SIZE="10">&lt;&lt;dto&gt;&gt;<BR/>OIDC claims<BR/>UserProfile response<BR/>roles, nickname</FONT>>,
+          fillcolor="#f7efff",
+          color="#a978dc"
+        ];
+
+        current_user_service [
+          label=<<B>CurrentUserService</B><BR/><FONT POINT-SIZE="10">&lt;&lt;service&gt;&gt;<BR/>создание и обновление<BR/>профиля пользователя</FONT>>,
+          fillcolor="#eaf6ee",
+          color="#68aa78"
+        ];
+
+        user_profile_repo [
+          label=<<B>UserProfileRepository</B><BR/><FONT POINT-SIZE="10">&lt;&lt;repository&gt;&gt;<BR/>JpaRepository&lt;UserProfile, Long&gt;</FONT>>,
+          fillcolor="#f4f0ff",
+          color="#9278d8"
+        ];
+      }
+
+      subgraph cluster_shop {
+        label="Shop / Payments";
+        color="#62ad74";
+        fillcolor="#f2fbf4";
+        style="rounded,filled";
+        fontname="Arial";
+        fontsize=15;
+        margin=14;
+
+        shop_controller [
+          label=<<B>ShopController</B><BR/><FONT POINT-SIZE="10">&lt;&lt;controller&gt;&gt;<BR/>/api/shop<BR/>/purchase/{productId}<BR/>/yookassa/webhook</FONT>>,
+          fillcolor="#e8f6ec",
+          color="#62ad74"
+        ];
+
+        shop_payloads [
+          label=<<B>Shop payloads</B><BR/><FONT POINT-SIZE="10">&lt;&lt;dto/payload&gt;&gt;<BR/>Product response<BR/>confirmationUrl<BR/>YooKassa webhook Map</FONT>>,
+          fillcolor="#eefaf1",
+          color="#62ad74"
+        ];
+
+        shop_service [
+          label=<<B>ShopService</B><BR/><FONT POINT-SIZE="10">&lt;&lt;service&gt;&gt;<BR/>создание платежа<BR/>обработка webhook<BR/>выдача покупки через RCON</FONT>>,
+          fillcolor="#eaf6ee",
+          color="#68aa78"
+        ];
+
+        shop_repos [
+          label=<<B>ProductRepository<BR/>PurchaseRepository</B><BR/><FONT POINT-SIZE="10">&lt;&lt;repository&gt;&gt;<BR/>JpaRepository&lt;Product/Purchase, Long&gt;</FONT>>,
+          fillcolor="#f4f0ff",
+          color="#9278d8"
+        ];
+
+        yookassa_client [
+          label=<<B>RestTemplate</B><BR/><FONT POINT-SIZE="10">&lt;&lt;http client&gt;&gt;<BR/>YooKassa API</FONT>>,
+          fillcolor="#fff6e8",
+          color="#d89933"
+        ];
+      }
+
+      subgraph cluster_admin {
+        label="Admin / Ops";
+        color="#d89933";
+        fillcolor="#fff8eb";
+        style="rounded,filled";
+        fontname="Arial";
+        fontsize=15;
+        margin=14;
+
+        admin_controllers [
+          label=<<B>Admin controllers</B><BR/><FONT POINT-SIZE="10">&lt;&lt;controller&gt;&gt;<BR/>AdminController<BR/>AdminMobController</FONT>>,
+          fillcolor="#fff3db",
+          color="#d89933"
+        ];
+
+        admin_mappers [
+          label=<<B>Admin DTO + mappers</B><BR/><FONT POINT-SIZE="10">&lt;&lt;mapper&gt;&gt;<BR/>MobCreateDto, MobUpdateDto<BR/>MobMapper<BR/>upload file params</FONT>>,
+          fillcolor="#fff7e8",
+          color="#d89933"
+        ];
+
+        admin_services [
+          label=<<B>Admin services</B><BR/><FONT POINT-SIZE="10">&lt;&lt;service&gt;&gt;<BR/>MobService<BR/>S3Service<BR/>MinecraftRconService</FONT>>,
+          fillcolor="#eaf6ee",
+          color="#68aa78"
+        ];
+
+        s3_client [
+          label=<<B>S3Client</B><BR/><FONT POINT-SIZE="10">&lt;&lt;infra client&gt;&gt;<BR/>AWS SDK compatible client</FONT>>,
+          fillcolor="#fff6e8",
+          color="#d89933"
+        ];
+
+        rcon_client [
+          label=<<B>RCON client</B><BR/><FONT POINT-SIZE="10">&lt;&lt;infra client&gt;&gt;<BR/>org.glavo.rcon.Rcon</FONT>>,
+          fillcolor="#fff6e8",
+          color="#d89933"
+        ];
+      }
+    }
+
+    mongock [
+      label=<<B>Mongock change units</B><BR/><FONT POINT-SIZE="10">&lt;&lt;migration/seed&gt;&gt;<BR/>V001-V005 seed<BR/>mobs, items, gameClasses, homeSlides</FONT>>,
+      fillcolor="#f3f6fa",
+      color="#9aa7b8"
+    ];
+
+    flyway [
+      label=<<B>Flyway migrations</B><BR/><FONT POINT-SIZE="10">&lt;&lt;migration&gt;&gt;<BR/>V1 create user_profiles,<BR/>products, purchases</FONT>>,
+      fillcolor="#f3f6fa",
+      color="#9aa7b8"
+    ];
+  }
+
+  { rank=same; keycloak; frontend; }
+  { rank=same; wiki_controllers; auth_controllers; shop_controller; admin_controllers; }
+  { rank=same; wiki_mappers; auth_payload; shop_payloads; admin_mappers; }
+  { rank=same; wiki_services; current_user_service; shop_service; admin_services; }
+  { rank=same; mongo_repos; user_profile_repo; shop_repos; s3_client; rcon_client; }
+  { rank=same; mongodb; postgresql; minio; minecraft; }
+
+  frontend -> security [label="HTTP"];
+  security -> keycloak [label="OAuth2/OIDC"];
+  security -> wiki_controllers [label="/api/wiki/**, /api/home/**"];
+  security -> auth_controllers [label="/api/auth/**, /api/profile/**"];
+  security -> shop_controller [label="/api/shop/**"];
+  security -> admin_controllers [label="/api/admin/**"];
+
+  wiki_controllers -> wiki_mappers [label="DTO mapping"];
+  wiki_controllers -> wiki_services [label="бизнес-логика"];
+  wiki_services -> mongo_repos [label="чтение/поиск"];
+  wiki_services -> wiki_mappers [label="create/update Mob", color="#c7a046", constraint=false];
+  mongo_repos -> mongo_custom [label="фильтры"];
+  mongo_repos -> mongodb;
+  mongo_custom -> mongodb [label="MongoTemplate"];
+
+  auth_controllers -> auth_payload;
+  auth_controllers -> current_user_service;
+  current_user_service -> user_profile_repo;
+  user_profile_repo -> postgresql;
+
+  shop_controller -> shop_payloads;
+  shop_controller -> shop_service;
+  shop_service -> current_user_service [label="профиль покупателя", constraint=false];
+  shop_service -> shop_repos;
+  shop_service -> user_profile_repo [label="профиль для выдачи", constraint=false];
+  shop_repos -> postgresql;
+  shop_service -> yookassa_client [label="создание платежа"];
+  yookassa_client -> yookassa [label="HTTPS API"];
+  yookassa -> shop_controller [label="webhook", constraint=false];
+  shop_service -> rcon_client [label="выдача покупки", constraint=false];
+
+  admin_controllers -> admin_mappers;
+  admin_controllers -> admin_services;
+  admin_services -> mongo_repos [label="create/update mobs", constraint=false];
+  admin_services -> s3_client [label="upload images"];
+  admin_services -> rcon_client [label="grantBonus"];
+  s3_client -> minio;
+  rcon_client -> minecraft;
+
+  mongock -> mongodb [label="seed documents"];
+  flyway -> postgresql [label="SQL migrations"];
+}

@@ -6,6 +6,22 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017/minecraft_wiki
 
+  datasource:
+    url: jdbc:postgresql://localhost:5432/minecraft_backend
+    username: danila
+    password: 147852
+
+    jpa:
+      hibernate:
+        ddl-auto: validate
+      show-sql: true
+      properties:
+        hibernate:
+          format_sql: true
+
+    flyway:
+      enabled: true
+
   security:
     oauth2:
       resourceserver:
@@ -16,7 +32,7 @@ spring:
         registration:
           keycloak:
             client-id: minecraft-backend
-            client-secret: 5lxE6gaXBQtAtWKTnV6oEHLxjrkf1Don
+            client-secret: pZmZS5bldtWiXDxzB7AEIgOlmDEcIiPi
             authorization-grant-type: authorization_code
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope:
@@ -32,9 +48,10 @@ keycloak:
   post-logout-redirect-uri: http://localhost:5173/admin
 
 mongock:
+  enabled: true
   migration-scan-package:
     - com.minecraft_wiki.backend.config.migration
-  transactions: false
+  transaction-enabled: false
 
 server:
   error:
@@ -58,3 +75,8 @@ s3:
   bucket: minecraft-wiki-images
   access-key: admin
   secret-key: adminadmin
+
+yookassa:
+  shop-id: 1373331
+  secret-key: test_MSf4k2_dTuPT_wNuPKJMIQrFyUBHSNCMS4R4kyOVocA
+  return-url: http://localhost:5173/profile

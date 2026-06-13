@@ -1,0 +1,111 @@
+@startuml
+title UML-диаграмма компонентов backend-приложения Minecraft Wiki
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam ArrowColor #2F3A45
+skinparam ArrowThickness 1.2
+skinparam component {
+  BorderColor #2F3A45
+  BackgroundColor #FFFFFF
+}
+skinparam package {
+  BorderColor #9AA7B8
+  BackgroundColor #F8FAFC
+}
+
+top to bottom direction
+
+actor "Frontend\nHTTP methods" as Frontend
+cloud "Keycloak\nOIDC, роли" as Keycloak
+cloud "YooKassa\nплатежи и webhook" as YooKassa
+node "Minecraft Server\nRCON-команды" as MinecraftServer
+node "MinIO / S3\nхранилище изображений" as Minio
+database "MongoDB\nmobs, items,\ngameClasses, homeSlides" as MongoDB
+database "PostgreSQL\nuser_profiles,\nproducts, purchases" as PostgreSQL
+
+package "Spring Boot Backend" as Backend {
+  component "SecurityConfig\n<<configuration>>\nOAuth2 Login, роли USER / ADMIN,\nCORS, правила доступа" as SecurityConfig
+
+  package "Wiki / Home" as WikiModule {
+    component "Wiki/Home controllers\n<<controller>>\nItemController\nMobController\nBossController\nPetController\nGameClassController\nInfoController" as WikiControllers
+    component "Wiki/Home DTO + mappers\n<<mapper>>\nItemMapper, MobMapper,\nBossMapper, PetMapper,\nGameClassMapper, HomeSlideMapper" as WikiMappers
+    component "Wiki/Home services\n<<service>>\nItemService, MobService,\nBossService, PetService,\nGameClassService, HomeSlideService" as WikiServices
+    component "Mongo repositories\n<<repository>>\nItemMongoRepository\nMobMongoRepository\nBossMongoRepository\nPetMongoRepository\nGameClassMongoRepository\nHomeSlideMongoRepository" as MongoRepositories
+    component "Custom Mongo queries\n<<repository impl>>\nItem/Boss/Mob/Pet\ncustom repositories\nMongoTemplate" as MongoCustomQueries
+  }
+
+  package "Auth / Profile" as AuthModule {
+    component "Auth + Profile controllers\n<<controller>>\nAuthController\nProfileController" as AuthControllers
+    component "Auth/Profile payload\n<<dto>>\nOIDC claims\nUserProfile response\nroles, nickname" as AuthPayload
+    component "CurrentUserService\n<<service>>\nсоздание и обновление\nпрофиля пользователя" as CurrentUserService
+    component "UserProfileRepository\n<<repository>>\nJpaRepository<UserProfile, Long>" as UserProfileRepository
+  }
+
+  package "Shop / Payments" as ShopModule {
+    component "ShopController\n<<controller>>\n/api/shop\n/api/shop/purchase/{productId}\n/api/shop/yookassa/webhook" as ShopController
+    component "Shop payloads\n<<dto/payload>>\nProduct response\nconfirmationUrl\nYooKassa webhook Map" as ShopPayloads
+    component "ShopService\n<<service>>\nсоздание платежа\nобработка webhook\nвыдача покупки через RCON" as ShopService
+    component "ProductRepository\nPurchaseRepository\n<<repository>>\nJpaRepository<Product/Purchase, Long>" as ShopRepositories
+    component "RestTemplate\n<<http client>>\nYooKassa API" as YooKassaClient
+  }
+
+  package "Admin / Ops" as AdminModule {
+    component "Admin controllers\n<<controller>>\nAdminController\nAdminMobController" as AdminControllers
+    component "Admin DTO + mappers\n<<mapper>>\nMobCreateDto\nMobUpdateDto\nMobMapper\nupload file params" as AdminMappers
+    component "Admin services\n<<service>>\nMobService\nS3Service\nMinecraftRconService" as AdminServices
+    component "S3Client\n<<infra client>>\nAWS SDK compatible client" as S3Client
+    component "RCON client\n<<infra client>>\norg.glavo.rcon.Rcon" as RconClient
+  }
+
+  component "Mongock change units\n<<migration/seed>>\nV001-V005 seed\nmobs, items,\ngameClasses, homeSlides" as Mongock
+  component "Flyway migrations\n<<migration>>\nV1 create user_profiles,\nproducts, purchases" as Flyway
+}
+
+Frontend --> SecurityConfig : HTTP-запросы
+SecurityConfig --> Keycloak : OAuth2/OIDC login\nполучение ролей
+SecurityConfig --> WikiControllers : /api/wiki/**, /api/home/**
+SecurityConfig --> AuthControllers : /api/auth/**, /api/profile/**
+SecurityConfig --> ShopController : /api/shop/**
+SecurityConfig --> AdminControllers : /api/admin/**
+
+WikiControllers --> WikiMappers : DTO mapping
+WikiControllers --> WikiServices : вызов бизнес-логики
+WikiServices --> MongoRepositories : чтение и поиск контента
+WikiServices --> WikiMappers : create/update Mob
+MongoRepositories --> MongoCustomQueries : фильтры, поиск, пагинация
+MongoRepositories --> MongoDB
+MongoCustomQueries --> MongoDB : MongoTemplate
+
+AuthControllers --> AuthPayload : OIDC/user response
+AuthControllers --> CurrentUserService
+CurrentUserService --> UserProfileRepository
+UserProfileRepository --> PostgreSQL
+
+ShopController --> ShopPayloads : request/response payload
+ShopController --> ShopService
+ShopService --> CurrentUserService : профиль покупателя
+ShopService --> ShopRepositories : продукты и покупки
+ShopService --> UserProfileRepository : поиск профиля для выдачи
+ShopRepositories --> PostgreSQL
+ShopService --> YooKassaClient : создание платежа
+YooKassaClient --> YooKassa : HTTPS API
+YooKassa --> ShopController : webhook payment.succeeded/canceled
+ShopService --> RconClient : команда выдачи покупки
+
+AdminControllers --> AdminMappers : MobCreateDto/MobUpdateDto
+AdminControllers --> AdminServices
+AdminServices --> MongoRepositories : create/update mobs
+AdminServices --> S3Client : upload images
+AdminServices --> RconClient : grantBonus
+S3Client --> Minio
+RconClient --> MinecraftServer
+
+Mongock --> MongoDB : seed documents
+Flyway --> PostgreSQL : SQL migrations
+
+@enduml

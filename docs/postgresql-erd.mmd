@@ -1,0 +1,31 @@
+erDiagram
+    USER_PROFILES ||--o{ PURCHASES : "makes"
+    PRODUCTS ||--o{ PURCHASES : "bought_as"
+
+    USER_PROFILES {
+        BIGSERIAL id PK
+        VARCHAR_255 keycloak_sub
+        VARCHAR_255 username
+        VARCHAR_255 minecraft_nickname
+    }
+
+    PRODUCTS {
+        BIGSERIAL id PK
+        VARCHAR_255 product_name
+        VARCHAR_1000 description
+        NUMERIC_10_2 price
+        VARCHAR_255 image_url
+        VARCHAR_255 command_to_grant
+        BOOLEAN active
+    }
+
+    PURCHASES {
+        BIGSERIAL id PK
+        BIGINT user_profile_id FK
+        BIGINT product_id FK
+        VARCHAR_255 product_name
+        NUMERIC_10_2 price
+        TIMESTAMP created_at
+        VARCHAR_50 status
+        VARCHAR_255 transaction_id
+    }

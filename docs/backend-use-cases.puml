@@ -1,0 +1,133 @@
+@startuml
+title UML-диаграмма вариантов использования backend-приложения Minecraft Wiki
+
+' Use case diagram: бизнес-сценарии и наиболее важные альтернативные/ошибочные случаи.
+!pragma layout smetana
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam linetype ortho
+skinparam ArrowColor #2F3A45
+skinparam ArrowThickness 1.2
+skinparam UsecaseBorderColor #2F3A45
+skinparam UsecaseBackgroundColor #FFFFFF
+skinparam RectangleBorderColor #9AA7B8
+skinparam RectangleBackgroundColor #FAFCFF
+
+left to right direction
+
+actor "Гость" as Guest
+actor "Пользователь" as User
+actor "Администратор" as Admin
+actor "Keycloak\n<<external system>>" as Keycloak
+actor "YooKassa\n<<external system>>" as YooKassa
+actor "Minecraft Server\n<<external system>>" as MinecraftServer
+actor "MinIO / S3\n<<external system>>" as Minio
+
+Guest <|-- User
+User <|-- Admin
+
+rectangle "Minecraft Wiki Backend" as System {
+  package "Wiki / Home" {
+    usecase "Просматривать\nwiki-контент" as UC_ViewWiki
+    usecase "Искать и фильтровать\nконтент" as UC_SearchContent
+    usecase "Открывать детальную\nстраницу сущности" as UC_ViewDetails
+    usecase "Просматривать\nглавную страницу" as UC_ViewHome
+  }
+
+  package "Авторизация / профиль" {
+    usecase "Авторизоваться\nчерез Keycloak" as UC_Login
+    usecase "Получить данные\nтекущего пользователя" as UC_CurrentUser
+    usecase "Редактировать\nMinecraft-ник" as UC_EditNickname
+    usecase "Выйти из системы" as UC_Logout
+  }
+
+  package "Магазин / покупка" {
+    usecase "Просматривать\nтовары" as UC_ViewProducts
+    usecase "Купить\nпривилегию" as UC_BuyPrivilege
+    usecase "Создать платеж" as UC_CreatePayment
+    usecase "Обработать\nwebhook оплаты" as UC_HandleWebhook
+    usecase "Выдать привилегию\nна Minecraft-сервере" as UC_GrantPrivilege
+  }
+
+  package "Администрирование" {
+    usecase "Управлять\nwiki-контентом" as UC_ManageContent
+    usecase "Создать моба" as UC_CreateMob
+    usecase "Редактировать моба" as UC_UpdateMob
+    usecase "Загрузить\nизображение" as UC_UploadImage
+    usecase "Выдать тестовый\nбонус" as UC_GrantBonus
+  }
+
+  package "Альтернативные и ошибочные сценарии" {
+    usecase "Отклонить запрос\nбез авторизации" as UC_Unauthorized
+    usecase "Отклонить доступ\nбез роли ADMIN" as UC_ForbiddenAdmin
+    usecase "Отклонить покупку\nбез Minecraft-ника" as UC_NoNickname
+    usecase "Обработать отмену\nили ошибку платежа" as UC_PaymentFailed
+    usecase "Зафиксировать ошибку\nвыдачи через RCON" as UC_RconError
+  }
+}
+
+' Associations: кто запускает сценарий.
+Guest -- UC_ViewWiki
+Guest -- UC_SearchContent
+Guest -- UC_ViewDetails
+Guest -- UC_ViewHome
+Guest -- UC_Login
+
+User -- UC_CurrentUser
+User -- UC_EditNickname
+User -- UC_Logout
+User -- UC_ViewProducts
+User -- UC_BuyPrivilege
+
+Admin -- UC_ManageContent
+Admin -- UC_GrantBonus
+
+Keycloak -- UC_Login
+Keycloak -- UC_Logout
+YooKassa -- UC_CreatePayment
+YooKassa -- UC_HandleWebhook
+MinecraftServer -- UC_GrantPrivilege
+MinecraftServer -- UC_GrantBonus
+Minio -- UC_UploadImage
+
+' Include: обязательные части основных сценариев.
+UC_ViewWiki ..> UC_SearchContent : <<include>>
+UC_ViewWiki ..> UC_ViewDetails : <<include>>
+UC_BuyPrivilege ..> UC_CreatePayment : <<include>>
+UC_HandleWebhook ..> UC_GrantPrivilege : <<include>>\nпри успешной оплате
+UC_ManageContent ..> UC_CreateMob : <<include>>
+UC_ManageContent ..> UC_UpdateMob : <<include>>
+UC_ManageContent ..> UC_UploadImage : <<include>>
+
+' Extend: типовые альтернативные/ошибочные случаи.
+UC_Unauthorized ..> UC_CurrentUser : <<extend>>
+UC_Unauthorized ..> UC_BuyPrivilege : <<extend>>
+UC_ForbiddenAdmin ..> UC_ManageContent : <<extend>>
+UC_NoNickname ..> UC_BuyPrivilege : <<extend>>
+UC_PaymentFailed ..> UC_HandleWebhook : <<extend>>
+UC_RconError ..> UC_GrantPrivilege : <<extend>>
+UC_RconError ..> UC_GrantBonus : <<extend>>
+
+note right of UC_NoNickname
+  Покупка невозможна, пока пользователь
+  не указал Minecraft-ник в профиле.
+end note
+
+note right of UC_PaymentFailed
+  Сценарий применяется при отмене
+  или неуспешном статусе платежа.
+end note
+
+legend right
+  <b>Обозначения</b>
+  -- связь актера с вариантом использования
+  ..> <<include>> обязательная часть сценария
+  ..> <<extend>> альтернативный или ошибочный сценарий
+endlegend
+
+@enduml

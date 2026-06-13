@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2f3a45"/>
+    </marker>
+    <style>
+      .title { font: 700 28px Arial, sans-serif; fill: #17212b; }
+      .table { fill: #fff; stroke: #2f3a45; stroke-width: 2; }
+      .head { fill: #f2f4f7; stroke: #2f3a45; stroke-width: 2; }
+      .table-title { font: 700 18px Arial, sans-serif; fill: #17212b; }
+      .row { font: 14px Menlo, Consolas, monospace; fill: #17212b; }
+      .note { font: 13px Arial, sans-serif; fill: #52606d; }
+      .line { stroke: #2f3a45; stroke-width: 2.2; fill: none; marker-end: url(#arrow); }
+      .label-bg { fill: #fff; }
+    </style>
+  </defs>
+  <rect width="1200" height="760" fill="#ffffff"/>
+  <text x="600" y="58" text-anchor="middle" class="title">ER-диаграмма таблиц PostgreSQL</text>
+
+  <rect x="410" y="94" width="390" height="42" fill="#f6f8fb" stroke="#a8b2bf" stroke-width="1.4"/>
+  <text x="605" y="120" text-anchor="middle" class="note">Обозначения: PK — первичный ключ, FK — внешний ключ</text>
+
+  <rect x="95" y="165" width="360" height="165" class="table"/>
+  <rect x="95" y="165" width="360" height="42" class="head"/>
+  <text x="115" y="192" class="table-title">user_profiles</text>
+  <text x="115" y="232" class="row">PK  id                   BIGSERIAL</text>
+  <text x="115" y="256" class="row">    keycloak_sub         VARCHAR(255)</text>
+  <text x="115" y="280" class="row">    username             VARCHAR(255)</text>
+  <text x="115" y="304" class="row">    minecraft_nickname   VARCHAR(255)</text>
+
+  <rect x="745" y="145" width="370" height="225" class="table"/>
+  <rect x="745" y="145" width="370" height="42" class="head"/>
+  <text x="765" y="172" class="table-title">products</text>
+  <text x="765" y="212" class="row">PK  id                 BIGSERIAL</text>
+  <text x="765" y="236" class="row">    product_name       VARCHAR(255)</text>
+  <text x="765" y="260" class="row">    description        VARCHAR(1000)</text>
+  <text x="765" y="284" class="row">    price              NUMERIC(10,2)</text>
+  <text x="765" y="308" class="row">    image_url          VARCHAR(255)</text>
+  <text x="765" y="332" class="row">    command_to_grant   VARCHAR(255)</text>
+  <text x="765" y="356" class="row">    active             BOOLEAN</text>
+
+  <rect x="410" y="470" width="390" height="250" class="table"/>
+  <rect x="410" y="470" width="390" height="42" class="head"/>
+  <text x="430" y="497" class="table-title">purchases</text>
+  <text x="430" y="537" class="row">PK  id                 BIGSERIAL</text>
+  <text x="430" y="561" class="row">FK  user_profile_id    BIGINT</text>
+  <text x="430" y="585" class="row">FK  product_id         BIGINT</text>
+  <text x="430" y="609" class="row">    product_name       VARCHAR(255)</text>
+  <text x="430" y="633" class="row">    price              NUMERIC(10,2)</text>
+  <text x="430" y="657" class="row">    created_at         TIMESTAMP</text>
+  <text x="430" y="681" class="row">    status             VARCHAR(50)</text>
+  <text x="430" y="705" class="row">    transaction_id     VARCHAR(255)</text>
+
+  <path d="M 275 330 L 275 405 L 520 405 L 520 470" class="line"/>
+  <rect x="245" y="389" width="310" height="24" class="label-bg"/>
+  <text x="400" y="405" text-anchor="middle" class="note">user_profiles.id = purchases.user_profile_id</text>
+
+  <path d="M 930 370 L 930 405 L 710 405 L 710 470" class="line"/>
+  <rect x="690" y="389" width="260" height="24" class="label-bg"/>
+  <text x="820" y="405" text-anchor="middle" class="note">products.id = purchases.product_id</text>
+</svg>

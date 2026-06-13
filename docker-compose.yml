@@ -1,5 +1,32 @@
 
 services:
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: minecraft_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: adminadmin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - project_network
+
+  postgres:
+    image: postgres:15
+    container_name: minecraft-postgres
+    environment:
+      POSTGRES_DB: minecraft_backend
+      POSTGRES_USER: danila
+      POSTGRES_PASSWORD: 147852
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - project_network
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.1
@@ -56,6 +83,7 @@ services:
 volumes:
   mongodb_data:
   minio_data:
+  postgres_data:
 
 networks:
   project_network:

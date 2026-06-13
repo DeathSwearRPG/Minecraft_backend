@@ -1,0 +1,161 @@
+@startuml
+title UML-диаграмма компонентов backend-приложения Minecraft Wiki
+
+' Версия для PlantUML: DTO/Mapper показан как промежуточный слой между API и Services.
+' Диаграмма показывает зависимости компонентов, а не полный сценарий выполнения.
+!pragma layout smetana
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam componentStyle uml2
+skinparam packageStyle rectangle
+skinparam linetype ortho
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam ArrowColor #2F3A45
+skinparam ArrowThickness 1.2
+skinparam PackageBorderColor #9AA7B8
+skinparam PackageBackgroundColor #FAFCFF
+skinparam ComponentBorderColor #2F3A45
+skinparam ComponentBackgroundColor #FFFFFF
+skinparam DatabaseBorderColor #2F3A45
+skinparam DatabaseBackgroundColor #F6FAFF
+skinparam NodeBorderColor #B84A4A
+skinparam NodeBackgroundColor #FFF1F2
+skinparam CloudBorderColor #B84A4A
+skinparam CloudBackgroundColor #FFF1F2
+
+top to bottom direction
+
+actor "Frontend\n<<external client>>" as Frontend
+cloud "Keycloak\n<<OIDC provider>>\nроли USER / ADMIN" as Keycloak
+cloud "YooKassa\n<<payment provider>>" as YooKassa
+node "Minecraft Server\n<<external system>>\nRCON-команды" as MinecraftServer
+cloud "MinIO / S3\n<<object storage>>\nизображения" as Minio
+database "MongoDB\n<<document database>>\nmobs, items,\ngameClasses, homeSlides" as MongoDB
+database "PostgreSQL\n<<relational database>>\nuser_profiles,\nproducts, purchases" as PostgreSQL
+
+package "Spring Boot Backend" as Backend {
+  component "SecurityConfig\n<<configuration>>\nOAuth2 Login, CORS,\nправила доступа к /api/**" as SecurityConfig
+
+  package "Presentation Layer" as Presentation {
+    component "Wiki / Home API\n<<REST controllers>>\nItem, Mob, Boss, Pet,\nGameClass, Info controllers" as WikiApi
+    component "Auth / Profile API\n<<REST controllers>>\nAuthController\nProfileController" as AuthApi
+    component "Shop API\n<<REST controller>>\nShopController\n/api/shop/**" as ShopApi
+    component "Admin API\n<<REST controllers>>\nAdminController\nAdminMobController" as AdminApi
+  }
+
+  package "DTO / Mapper Layer" as DtoLayer {
+    component "Wiki DTO + Mappers\n<<mapper>>\nResponseDto, DetailsDto\nItem/Mob/Boss/Pet/Class/Slide mappers" as WikiDto
+    component "Auth/Profile payload\n<<dto/payload>>\nOIDC claims\nUserProfile response" as AuthDto
+    component "Shop payloads\n<<dto/payload>>\nProduct response\nconfirmationUrl\nYooKassa webhook Map" as ShopDto
+    component "Admin DTO + Mappers\n<<mapper>>\nMobCreateDto, MobUpdateDto\nMobMapper, upload params" as AdminDto
+  }
+
+  package "Service Layer" as Services {
+    component "Wiki / Home Services\n<<service>>\nItem, Mob, Boss, Pet,\nGameClass, HomeSlide services" as WikiServices
+    component "CurrentUserService\n<<service>>\nget/create profile\nupdate minecraftNickname" as CurrentUserService
+    component "ShopService\n<<service>>\nсоздание платежа\nобработка webhook\nвыдача покупки" as ShopService
+    component "Admin Services\n<<service>>\nMobService\nS3Service\nMinecraftRconService" as AdminServices
+  }
+
+  package "Persistence / Infra Layer" as Persistence {
+    component "Mongo Repositories\n<<repository>>\nMongoRepository\ncustom MongoTemplate queries" as MongoRepositories
+    component "UserProfileRepository\n<<repository>>\nJpaRepository<UserProfile, Long>" as UserProfileRepository
+    component "ProductRepository\nPurchaseRepository\n<<repository>>\nJpaRepository<Product/Purchase, Long>" as ShopRepositories
+    component "YooKassa Client\n<<infra client>>\nRestTemplate" as YooKassaClient
+    component "S3Client\n<<infra client>>\nAWS SDK compatible client" as S3Client
+    component "RCON Client\n<<infra client>>\norg.glavo.rcon.Rcon" as RconClient
+  }
+
+  package "Migrations / Seed" as Migrations {
+    component "Mongock Change Units\n<<migration/seed>>\nV001-V005 seed\nwiki documents" as Mongock
+    component "Flyway Migrations\n<<migration>>\nV1 PostgreSQL schema" as Flyway
+  }
+}
+
+' Мягкие ограничения раскладки.
+Frontend -[hidden]down- SecurityConfig
+SecurityConfig -[hidden]down- Presentation
+Presentation -[hidden]down- DtoLayer
+DtoLayer -[hidden]down- Services
+Services -[hidden]down- Persistence
+Persistence -[hidden]down- Migrations
+
+WikiApi -[hidden]right- AuthApi
+AuthApi -[hidden]right- ShopApi
+ShopApi -[hidden]right- AdminApi
+
+WikiDto -[hidden]right- AuthDto
+AuthDto -[hidden]right- ShopDto
+ShopDto -[hidden]right- AdminDto
+
+WikiServices -[hidden]right- CurrentUserService
+CurrentUserService -[hidden]right- ShopService
+ShopService -[hidden]right- AdminServices
+
+MongoRepositories -[hidden]right- UserProfileRepository
+UserProfileRepository -[hidden]right- ShopRepositories
+ShopRepositories -[hidden]right- YooKassaClient
+YooKassaClient -[hidden]right- S3Client
+S3Client -[hidden]right- RconClient
+
+MongoDB -[hidden]right- PostgreSQL
+PostgreSQL -[hidden]right- YooKassa
+YooKassa -[hidden]right- MinecraftServer
+MinecraftServer -[hidden]right- Minio
+
+' Вход и безопасность.
+Frontend --> SecurityConfig : HTTP-запросы
+SecurityConfig --> Keycloak : OAuth2/OIDC
+SecurityConfig --> WikiApi : /api/wiki/**, /api/home/**
+SecurityConfig --> AuthApi : /api/auth/**, /api/profile/**
+SecurityConfig --> ShopApi : /api/shop/**
+SecurityConfig --> AdminApi : /api/admin/**
+
+' Presentation -> DTO/Mapper -> Service.
+WikiApi --> WikiDto : DTO запроса/ответа
+WikiDto --> WikiServices : mapping DTO <-> model
+
+AuthApi --> AuthDto : OIDC/user payload
+AuthDto --> CurrentUserService : данные профиля
+
+ShopApi --> ShopDto : request/response payload
+ShopDto --> ShopService : данные покупки/webhook
+
+AdminApi --> AdminDto : create/update DTO
+AdminDto --> AdminServices : mapping DTO -> Mob
+
+' Service -> Persistence / Infra.
+WikiServices --> MongoRepositories : чтение и поиск контента
+MongoRepositories --> MongoDB : find/save documents
+
+CurrentUserService --> UserProfileRepository : find/save profile
+UserProfileRepository --> PostgreSQL : user_profiles
+
+ShopService --> CurrentUserService : профиль покупателя
+ShopService --> ShopRepositories : products/purchases
+ShopRepositories --> PostgreSQL : products, purchases
+ShopService --> YooKassaClient : create payment
+YooKassaClient --> YooKassa : HTTPS API
+YooKassa --> ShopApi : webhook callback
+ShopService --> RconClient : выдача покупки
+RconClient --> MinecraftServer : RCON command
+
+AdminServices --> MongoRepositories : create/update mobs
+AdminServices --> S3Client : upload images
+S3Client --> Minio : putObject
+AdminServices --> RconClient : grantBonus
+
+' Migrations.
+Mongock --> MongoDB : seed documents
+Flyway --> PostgreSQL : SQL migrations
+
+legend right
+  <b>Обозначения</b>
+  --> зависимость / передача управления
+  DTO/Mapper связывает API-контракт с сервисной моделью
+  callback показан только для webhook YooKassa
+endlegend
+
+@enduml

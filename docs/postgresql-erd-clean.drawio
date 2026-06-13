@@ -1,0 +1,41 @@
+<mxfile host="app.diagrams.net" agent="Codex">
+  <diagram id="postgresql-erd-clean" name="PostgreSQL ERD">
+    <mxGraphModel dx="1406" dy="742" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="760" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="user_profiles" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2F3A45;strokeWidth=1.8;fontSize=14;fontColor=#17212B;align=left;verticalAlign=top;spacing=12;sketch=0;" value="&lt;b&gt;user_profiles&lt;/b&gt;&lt;hr&gt;&lt;font face=&quot;Menlo&quot;&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(23, 33, 43), rgb(203, 211, 220));&quot;&gt;PK  id                   BIGSERIAL&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(23, 33, 43), rgb(203, 211, 220));&quot;&gt;keycloak_sub         VARCHAR(255)&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(23, 33, 43), rgb(203, 211, 220));&quot;&gt;username             VARCHAR(255)&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(23, 33, 43), rgb(203, 211, 220));&quot;&gt;minecraft_nickname   VARCHAR(255)&lt;/span&gt;&lt;/div&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="140" width="285" x="95" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="products" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2F3A45;strokeWidth=1.8;fontSize=14;fontColor=#17212B;align=left;verticalAlign=top;spacing=12;sketch=0;" value="&lt;b&gt;products&lt;/b&gt;&lt;hr&gt;&lt;font face=&quot;Menlo&quot;&gt;PK  id                 BIGSERIAL&lt;br&gt;    product_name       VARCHAR(255)&lt;br&gt;    description        VARCHAR(1000)&lt;br&gt;    price              NUMERIC(10,2)&lt;br&gt;    image_url          VARCHAR(255)&lt;br&gt;    command_to_grant   VARCHAR(255)&lt;br&gt;    active             BOOLEAN&lt;/font&gt;" vertex="1">
+          <mxGeometry height="225" width="370" x="745" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="purchases" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2F3A45;strokeWidth=1.8;fontSize=14;fontColor=#17212B;align=left;verticalAlign=top;spacing=12;sketch=0;" value="&lt;b&gt;purchases&lt;/b&gt;&lt;hr&gt;&lt;font face=&quot;Menlo&quot;&gt;PK  id                 BIGSERIAL&lt;br&gt;FK  user_profile_id    BIGINT&lt;br&gt;FK  product_id         BIGINT&lt;br&gt;    product_name       VARCHAR(255)&lt;br&gt;    price              NUMERIC(10,2)&lt;br&gt;    created_at         TIMESTAMP&lt;br&gt;    status             VARCHAR(50)&lt;br&gt;    transaction_id     VARCHAR(255)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="250" width="390" x="410" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="user_relation" edge="1" parent="1" source="user_profiles" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=ERone;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#2F3A45;strokeWidth=2;sketch=0;" target="purchases" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="275" y="405" />
+              <mxPoint x="510" y="405" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="user_relation_label" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=12;fontColor=#52606D;sketch=0;" value="user_profiles.id = purchases.user_profile_id" vertex="1">
+          <mxGeometry height="24" width="310" x="245" y="382" as="geometry" />
+        </mxCell>
+        <mxCell id="product_relation" edge="1" parent="1" source="products" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=ERone;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#2F3A45;strokeWidth=2;sketch=0;" target="purchases" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="930" y="405" />
+              <mxPoint x="710" y="405" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="product_relation_label" parent="1" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=12;fontColor=#52606D;sketch=0;" value="products.id = purchases.product_id" vertex="1">
+          <mxGeometry height="24" width="260" x="690" y="382" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

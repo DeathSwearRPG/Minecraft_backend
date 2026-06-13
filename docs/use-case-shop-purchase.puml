@@ -1,0 +1,84 @@
+@startuml
+title UML-диаграмма прецедентов покупки привилегии
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam linetype ortho
+skinparam ArrowColor #2F3A45
+skinparam ArrowThickness 1.2
+skinparam UsecaseBorderColor #2F3A45
+skinparam UsecaseBackgroundColor #FFFFFF
+skinparam RectangleBorderColor #9AA7B8
+skinparam RectangleBackgroundColor #FAFCFF
+
+left to right direction
+
+actor "Пользователь" as User
+actor "YooKassa" as YooKassa
+actor "Minecraft Server" as MinecraftServer
+
+rectangle "Minecraft Wiki" {
+  usecase "Просмотреть\nсписок товаров" as UC_ViewProducts
+  usecase "Выбрать товар" as UC_SelectProduct
+  usecase "Купить\nпривилегию" as UC_BuyPrivilege
+
+  usecase "Оформить платеж" as UC_PreparePayment
+  usecase "Проверить наличие\nMinecraft-ника" as UC_CheckNickname
+  usecase "Проверить доступность\nтовара" as UC_CheckProduct
+  usecase "Сформировать\nпокупку" as UC_CreatePurchase
+  usecase "Создать платеж\nв YooKassa" as UC_CreatePayment
+  usecase "Перейти на страницу\nоплаты" as UC_OpenPaymentPage
+
+  usecase "Обработать\nwebhook оплаты" as UC_HandleWebhook
+  usecase "Обработать успешную\nоплату" as UC_PaymentSucceeded
+  usecase "Выдать привилегию\nна сервере" as UC_GrantPrivilege
+  usecase "Завершить покупку\nуспешно" as UC_CompletePurchase
+  usecase "Отметить покупку\nкак неуспешную" as UC_MarkFailed
+
+  usecase "Сообщить о необходимости\nуказать Minecraft-ник" as UC_NoNickname
+  usecase "Сообщить, что товар\nнедоступен" as UC_ProductUnavailable
+  usecase "Обработать отмену\nплатежа" as UC_PaymentCancelled
+  usecase "Сообщить об ошибке\nвыдачи привилегии" as UC_RconError
+}
+
+User -- UC_ViewProducts
+User -- UC_BuyPrivilege
+User -- UC_OpenPaymentPage
+
+YooKassa -- UC_CreatePayment
+YooKassa -- UC_HandleWebhook
+
+MinecraftServer -- UC_GrantPrivilege
+
+UC_BuyPrivilege .down.> UC_SelectProduct : <<include>>
+UC_BuyPrivilege .right.> UC_PreparePayment : <<include>>
+
+UC_PreparePayment .down.> UC_CheckNickname : <<include>>
+UC_PreparePayment .down.> UC_CheckProduct : <<include>>
+UC_PreparePayment .down.> UC_CreatePurchase : <<include>>
+UC_PreparePayment .right.> UC_CreatePayment : <<include>>
+UC_CreatePayment .right.> UC_OpenPaymentPage : <<include>>
+
+UC_PaymentSucceeded .right.> UC_HandleWebhook : <<extend>>\n[payment.succeeded]
+UC_PaymentSucceeded .right.> UC_GrantPrivilege : <<include>>
+UC_GrantPrivilege .right.> UC_CompletePurchase : <<include>>
+
+UC_NoNickname .left.> UC_CheckNickname : <<extend>>
+UC_ProductUnavailable .left.> UC_CheckProduct : <<extend>>
+UC_PaymentCancelled .down.> UC_HandleWebhook : <<extend>>\n[payment.canceled]
+UC_PaymentCancelled .right.> UC_MarkFailed : <<include>>
+UC_RconError .down.> UC_GrantPrivilege : <<extend>>
+
+UC_ViewProducts -[hidden]down- UC_BuyPrivilege
+UC_BuyPrivilege -[hidden]right- UC_PreparePayment
+UC_PreparePayment -[hidden]right- UC_CreatePayment
+UC_CreatePayment -[hidden]right- UC_OpenPaymentPage
+UC_HandleWebhook -[hidden]right- UC_PaymentSucceeded
+UC_PaymentSucceeded -[hidden]right- UC_GrantPrivilege
+UC_GrantPrivilege -[hidden]right- UC_CompletePurchase
+
+@enduml

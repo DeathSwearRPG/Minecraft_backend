@@ -1,5 +1,6 @@
 package com.minecraft_wiki.backend.Controller;
 
+import com.minecraft_wiki.backend.Service.CurrentUserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,6 +30,8 @@ public class AuthController {
     @Value("${spring.security.oauth2.client.registration.keycloak.client-id}")
     private String clientId;
 
+    private final CurrentUserService currentUserService;
+
     @GetMapping("/login")
     public void login(
             @RequestParam(required = false) String redirect,
@@ -56,15 +59,8 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public Map<String, Object> me(@AuthenticationPrincipal OidcUser user) {
-        Map<String, Object> realmAccess = user.getClaimAsMap("realm_access");
-
-        List<String> roles = (List<String>) realmAccess.get("roles");
-
-        return Map.of(
-                "username", user.getPreferredUsername(),
-                "roles", roles
-        );
+    public Map<String, Object> getUserInfo(@AuthenticationPrincipal OidcUser user) {
+        return currentUserService.getCurrentUserInfo(user);
     }
 
     @PostMapping("/logout")

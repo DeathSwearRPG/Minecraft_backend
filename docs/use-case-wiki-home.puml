@@ -1,0 +1,114 @@
+@startuml
+title UML-диаграмма вариантов использования wiki-раздела и главной страницы
+
+!pragma layout smetana
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam linetype ortho
+skinparam ArrowColor #2F3A45
+skinparam ArrowThickness 1.2
+skinparam UsecaseBorderColor #2F3A45
+skinparam UsecaseBackgroundColor #FFFFFF
+skinparam RectangleBorderColor #9AA7B8
+skinparam RectangleBackgroundColor #FAFCFF
+
+left to right direction
+
+actor "Гость" as Guest
+actor "Пользователь" as User
+
+Guest <|-- User
+
+rectangle "Wiki / Home" {
+  package "Главная страница" {
+    usecase "Открыть главную\nстраницу" as UC_OpenHome
+    usecase "Просмотреть\nслайды главной\nстраницы" as UC_ViewSlides
+    usecase "Перейти из главной\nв wiki-раздел" as UC_GoToWiki
+  }
+
+  package "Каталоги wiki" {
+    usecase "Просматривать\nкаталог предметов" as UC_Items
+    usecase "Просматривать\nкаталог мобов" as UC_Mobs
+    usecase "Просматривать\nкаталог боссов" as UC_Bosses
+    usecase "Просматривать\nкаталог питомцев" as UC_Pets
+    usecase "Просматривать\nкаталог игровых\nклассов" as UC_Classes
+  }
+
+  package "Поиск и навигация" {
+    usecase "Искать сущности\nпо названию" as UC_SearchByName
+    usecase "Фильтровать\nрезультаты" as UC_Filter
+    usecase "Переключать страницы\nрезультатов" as UC_Pagination
+    usecase "Получить список\nподходящих сущностей" as UC_ResultList
+  }
+
+  package "Детальная информация" {
+    usecase "Открыть карточку\nпредмета" as UC_ItemDetails
+    usecase "Открыть карточку\nмоба, босса\nили питомца" as UC_MobDetails
+    usecase "Открыть карточку\nигрового класса" as UC_ClassDetails
+    usecase "Просмотреть описание,\nхарактеристики\nи изображение" as UC_ViewEntityInfo
+  }
+
+  package "Альтернативные сценарии" {
+    usecase "Показать пустой\nрезультат поиска" as UC_EmptyResult
+    usecase "Сообщить, что сущность\nне найдена" as UC_NotFound
+    usecase "Сообщить о некорректном\nидентификаторе" as UC_InvalidId
+  }
+}
+
+Guest -- UC_OpenHome
+Guest -- UC_Items
+Guest -- UC_Mobs
+Guest -- UC_Bosses
+Guest -- UC_Pets
+Guest -- UC_Classes
+Guest -- UC_SearchByName
+Guest -- UC_Filter
+Guest -- UC_Pagination
+Guest -- UC_ItemDetails
+Guest -- UC_MobDetails
+Guest -- UC_ClassDetails
+
+UC_OpenHome ..> UC_ViewSlides : <<include>>
+UC_OpenHome ..> UC_GoToWiki : <<extend>>
+
+UC_Items ..> UC_ResultList : <<include>>
+UC_Mobs ..> UC_ResultList : <<include>>
+UC_Bosses ..> UC_ResultList : <<include>>
+UC_Pets ..> UC_ResultList : <<include>>
+UC_Classes ..> UC_ResultList : <<include>>
+
+UC_ResultList ..> UC_SearchByName : <<include>>
+UC_ResultList ..> UC_Filter : <<include>>
+UC_ResultList ..> UC_Pagination : <<include>>
+
+UC_ItemDetails ..> UC_ViewEntityInfo : <<include>>
+UC_MobDetails ..> UC_ViewEntityInfo : <<include>>
+UC_ClassDetails ..> UC_ViewEntityInfo : <<include>>
+
+UC_EmptyResult ..> UC_ResultList : <<extend>>
+UC_NotFound ..> UC_ItemDetails : <<extend>>
+UC_NotFound ..> UC_MobDetails : <<extend>>
+UC_NotFound ..> UC_ClassDetails : <<extend>>
+UC_InvalidId ..> UC_ItemDetails : <<extend>>
+UC_InvalidId ..> UC_MobDetails : <<extend>>
+UC_InvalidId ..> UC_ClassDetails : <<extend>>
+
+note right of UC_ResultList
+  Список формируется с учетом выбранного
+  раздела wiki, поисковой строки, фильтров
+  и параметров пагинации.
+end note
+
+legend right
+  <b>Обозначения</b>
+  -- участие актора в сценарии
+  ..> <<include>> обязательная часть сценария
+  ..> <<extend>> альтернативный или ошибочный сценарий
+endlegend
+
+@enduml
